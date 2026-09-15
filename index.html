@@ -10,15 +10,13 @@
         body {
             margin: 0; padding: 0; color: #fff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex; flex-direction: column; 
-            min-height: 100vh; /* Ubah dari height:100vh ke min-height agar bisa memanjang */
-            overflow-x: hidden; overflow-y: auto; /* Izinkan scroll ke bawah */
+            display: grid; 
+            grid-template-rows: auto 1fr auto; /* Header, Konten, Footer */
+            height: 100vh; 
+            overflow: hidden; /* Dilarang scroll di TV/Laptop */
             background: url('https://images.unsplash.com/photo-1542816417-0983c9c9ad53?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed; 
             background-size: cover;
         }
-        /* Sembunyikan scrollbar biar tampilan tetap bersih */
-        body::-webkit-scrollbar { display: none; }
-        body { -ms-overflow-style: none; scrollbar-width: none; }
 
         .glass-panel {
             background: transparent !important;
@@ -29,116 +27,78 @@
         }
 
         header {
-            padding: 20px 40px; text-align: left; 
-            flex-shrink: 0; 
+            padding: 1.5vh 3vw; text-align: left; 
         }
         header h1 { 
-            margin: 0; color: #ffc107; font-size: 3rem; 
+            margin: 0; color: #ffc107; 
+            /* Font pakai vh biar kecil di laptop, besar di TV */
+            font-size: clamp(1.5rem, 4vh, 3rem); 
             text-shadow: 3px 3px 6px #000, -2px -2px 6px #000, 0 0 15px #000; 
         }
 
         .main-content {
-            display: flex; flex: 1; padding: 0 40px 20px 40px; gap: 40px;
+            display: flex; padding: 0 3vw 1.5vh 3vw; gap: 3vw;
             min-height: 0; 
         }
         
         .left-panel {
             flex: 1; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; 
         }
-        .clock-container { position: relative; width: 220px; height: 220px; margin-bottom: 15px; flex-shrink: 0; }
+        .clock-container { position: relative; width: 25vh; height: 25vh; max-width: 220px; max-height: 220px; margin-bottom: 1vh; flex-shrink: 0; }
         .digital-clock { 
-            font-size: 4.5rem; color: #ffffff; font-weight: bold; 
-            text-shadow: 3px 3px 8px #000, -2px -2px 6px #000; 
-            line-height: 1;
+            font-size: clamp(2rem, 6vh, 4.5rem); color: #ffffff; font-weight: bold; 
+            text-shadow: 3px 3px 8px #000, -2px -2px 6px #000; line-height: 1;
         }
         .date-info { 
-            font-size: 1.5rem; color: #ffc107; margin-top: 10px; 
+            font-size: clamp(1rem, 2.5vh, 1.5rem); color: #ffc107; margin-top: 1vh; 
             text-shadow: 2px 2px 6px #000; 
         }
         
         .right-panel {
-            flex: 1.2; display: flex; flex-direction: column; gap: 25px; justify-content: center;
-            text-align: right; 
-            overflow: visible; /* Ubah dari hidden ke visible */
+            flex: 1.2; display: flex; flex-direction: column; gap: 2vh; justify-content: center;
+            text-align: right; overflow: hidden; 
         }
         .section-title { 
-            color: #ffc107; font-size: 1.8rem; border-bottom: 3px solid #ffc107; 
-            padding-bottom: 10px; margin-bottom: 15px; 
-            text-shadow: 2px 2px 6px #000; 
+            color: #ffc107; font-size: clamp(1.2rem, 3vh, 1.8rem); border-bottom: 3px solid #ffc107; 
+            padding-bottom: 1vh; margin-bottom: 1vh; text-shadow: 2px 2px 6px #000; 
         }
-        .schedule-table { width: 100%; font-size: 1.6rem; border-collapse: collapse; }
+        .schedule-table { width: 100%; font-size: clamp(1rem, 2.5vh, 1.6rem); border-collapse: collapse; }
         .schedule-table td { 
-            padding: 10px 0; 
-            color: #ffffff; 
-            font-weight: bold;
+            padding: 1vh 0; color: #ffffff; font-weight: bold;
             text-shadow: 2px 2px 6px #000, -1px -1px 4px #000; 
         }
-        .schedule-table .time { 
-            color: #00ff00; 
-            text-shadow: 2px 2px 6px #000; 
-        }
-        .imam-name {
-            color: #00e5ff; 
-            text-shadow: 2px 2px 6px #000;
-        }
+        .schedule-table .time { color: #00ff00; text-shadow: 2px 2px 6px #000; }
+        .imam-name { color: #00e5ff; text-shadow: 2px 2px 6px #000; }
         
-        .info-box { padding: 15px 0; border-top: 2px solid rgba(255,255,255,0.5); }
-        .info-box h3 { margin: 0 0 10px 0; color: #ffc107; font-size: 1.4rem; text-shadow: 2px 2px 6px #000; }
-        .info-list { font-size: 1.3rem; line-height: 1.5; color: #ffffff; font-weight: bold; text-shadow: 2px 2px 6px #000; }
-        .kas-amount { color: #00ff00; font-weight: bold; font-size: 1.6rem; margin-top: 5px; text-shadow: 2px 2px 6px #000; }
+        .info-box { padding: 1vh 0; border-top: 2px solid rgba(255,255,255,0.5); }
+        .info-box h3 { margin: 0 0 1vh 0; color: #ffc107; font-size: clamp(1rem, 2.2vh, 1.4rem); text-shadow: 2px 2px 6px #000; }
+        .info-list { font-size: clamp(0.9rem, 2vh, 1.3rem); line-height: 1.5; color: #ffffff; font-weight: bold; text-shadow: 2px 2px 6px #000; }
+        .kas-amount { color: #00ff00; font-weight: bold; font-size: clamp(1rem, 2.8vh, 1.6rem); margin-top: 0.5vh; text-shadow: 2px 2px 6px #000; }
 
         footer {
-            background: rgba(0, 0, 0, 0.6); 
-            padding: 15px 0; overflow: hidden; white-space: nowrap;
-            flex-shrink: 0; 
+            background: rgba(0, 0, 0, 0.6); padding: 1.5vh 0; overflow: hidden; white-space: nowrap;
         }
-        .running-text { display: inline-block; font-size: 1.5rem; color: #fff; animation: scroll 25s linear infinite; text-shadow: 2px 2px 4px #000; }
+        .running-text { display: inline-block; font-size: clamp(1rem, 2.5vh, 1.5rem); color: #fff; animation: scroll 25s linear infinite; text-shadow: 2px 2px 4px #000; }
         @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
         
+        /* Analog Clock CSS */
         .clock-face { width: 100%; height: 100%; border-radius: 50%; background: rgba(0,0,0,0.6); border: 8px solid #ffc107; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
-        .clock-num {
-            position: absolute; color: #ffffff; font-size: 1.5rem; font-weight: bold; text-shadow: 1px 1px 3px #000;
-        }
+        .clock-num { position: absolute; color: #ffffff; font-size: clamp(0.8rem, 2vh, 1.5rem); font-weight: bold; text-shadow: 1px 1px 3px #000; }
         .hand { position: absolute; top: 50%; left: 50%; transform-origin: bottom; background: #fff; border-radius: 10px; transform: translateX(-50%) rotate(0deg); z-index: 10; }
-        .hour { width: 6px; height: 50px; margin-top: -50px; }
-        .minute { width: 4px; height: 80px; margin-top: -80px; background: #00ff00; }
-        .second { width: 2px; height: 95px; margin-top: -95px; background: red; }
+        .hour { width: 6px; height: 25%; margin-top: -25%; }
+        .minute { width: 4px; height: 40%; margin-top: -40%; background: #00ff00; }
+        .second { width: 2px; height: 45%; margin-top: -45%; background: red; }
         .center-dot { position: absolute; top: 50%; left: 50%; width: 12px; height: 12px; background: #ffc107; border-radius: 50%; transform: translate(-50%, -50%); z-index: 11; }
-
-        /* AUTO-SHRINK UNTUK LAPTOP (Resolusi Pendek) */
-        @media (max-height: 800px) {
-            header { padding: 10px 20px; }
-            header h1 { font-size: 2.2rem; }
-            .main-content { padding: 0 20px 10px 20px; gap: 20px; }
-            .clock-container { width: 150px; height: 150px; }
-            .clock-num { font-size: 1.1rem; }
-            .hour { height: 35px; margin-top: -35px; }
-            .minute { height: 55px; margin-top: -55px; }
-            .second { height: 65px; margin-top: -65px; }
-            .digital-clock { font-size: 3rem; }
-            .date-info { font-size: 1.1rem; }
-            .right-panel { gap: 15px; }
-            .section-title { font-size: 1.3rem; margin-bottom: 10px; }
-            .schedule-table { font-size: 1.2rem; }
-            .schedule-table td { padding: 5px 0; }
-            .info-box h3 { font-size: 1.1rem; }
-            .info-list { font-size: 1rem; }
-            .kas-amount { font-size: 1.2rem; }
-            .running-text { font-size: 1.2rem; }
-        }
 
         /* RESPONSIVE UNTUK HP (Tampilan Tegak) */
         @media (max-width: 768px) {
-            body { height: auto; overflow-y: auto; }
+            body { height: auto; overflow-y: auto; display: flex; flex-direction: column; }
             .main-content { flex-direction: column; padding: 0 20px 20px 20px; }
             header { padding: 20px; text-align: center; }
-            header h1 { font-size: 2rem; }
             .left-panel { align-items: center; }
             .clock-container { width: 180px; height: 180px; }
             .digital-clock { font-size: 3.5rem; }
             .right-panel { text-align: center; }
-            .schedule-table { font-size: 1.3rem; }
-            .section-title { font-size: 1.5rem; }
             .info-box { text-align: center; }
         }
     </style>
