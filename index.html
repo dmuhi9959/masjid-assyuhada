@@ -116,7 +116,7 @@
             .right-panel { gap: 15px; }
             .section-title { font-size: 1.3rem; margin-bottom: 10px; }
             .schedule-table { font-size: 1.2rem; }
-            .schedule-table td { padding: 6px 0; }
+            .schedule-table td { padding: 5px 0; } /* Dikecilin sedikit biar muat 7 baris */
             .info-box h3 { font-size: 1.1rem; }
             .info-list { font-size: 1rem; }
             .kas-amount { font-size: 1.2rem; }
@@ -133,7 +133,7 @@
 <body>
 
     <header class="glass-panel">
-        <h1 id="masjid-name">MASJID ASYYUHADA</h1>
+        <h1 id="masjid-name">MASJID AL-HIKMAH</h1>
     </header>
 
     <div class="main-content">
@@ -154,7 +154,9 @@
             <div>
                 <div class="section-title" id="title-jadwal">JADWAL SHOLAT & IMAM</div>
                 <table class="schedule-table">
+                    <tr><td class="nama-sholat">Imsak</td><td></td><td class="time" id="imsak">--:--</td></tr>
                     <tr><td class="nama-sholat">Subuh</td><td id="subuh-imam" class="imam-name"></td><td class="time" id="subuh">04:30</td></tr>
+                    <tr><td class="nama-sholat">Syuruk</td><td></td><td class="time" id="syuruk">--:--</td></tr>
                     <tr><td class="nama-sholat">Dzuhur</td><td id="dzuhur-imam" class="imam-name"></td><td class="time" id="dzuhur">12:00</td></tr>
                     <tr><td class="nama-sholat">Ashar</td><td id="ashar-imam" class="imam-name"></td><td class="time" id="ashar">15:15</td></tr>
                     <tr><td class="nama-sholat">Maghrib</td><td id="maghrib-imam" class="imam-name"></td><td class="time" id="maghrib">18:00</td></tr>
@@ -188,16 +190,20 @@
 
         // Teks & Jam
         dbRef.child('nama_masjid').on('value', s => document.getElementById('masjid-name').innerText = s.val() || "MASJID AL-HIKMAH");
+        dbRef.child('imsak').on('value', s => document.getElementById('imsak').innerText = s.val() || "--:--");
         dbRef.child('subuh').on('value', s => document.getElementById('subuh').innerText = s.val() || "04:30");
+        dbRef.child('syuruk').on('value', s => document.getElementById('syuruk').innerText = s.val() || "--:--");
         dbRef.child('dzuhur').on('value', s => document.getElementById('dzuhur').innerText = s.val() || "12:00");
         dbRef.child('ashar').on('value', s => document.getElementById('ashar').innerText = s.val() || "15:15");
         dbRef.child('maghrib').on('value', s => document.getElementById('maghrib').innerText = s.val() || "18:00");
         dbRef.child('isya').on('value', s => document.getElementById('isya').innerText = s.val() || "19:10");
+        
         dbRef.child('imam_subuh').on('value', s => document.getElementById('subuh-imam').innerText = s.val() || "");
         dbRef.child('imam_dzuhur').on('value', s => document.getElementById('dzuhur-imam').innerText = s.val() || "");
         dbRef.child('imam_ashar').on('value', s => document.getElementById('ashar-imam').innerText = s.val() || "");
         dbRef.child('imam_maghrib').on('value', s => document.getElementById('maghrib-imam').innerText = s.val() || "");
         dbRef.child('imam_isya').on('value', s => document.getElementById('isya-imam').innerText = s.val() || "");
+        
         dbRef.child('info_text').on('value', s => document.getElementById('info-text').innerText = s.val() || "Tidak ada info terbaru.");
         dbRef.child('kas_masjid').on('value', s => document.getElementById('kas-masjid').innerText = s.val() || "Rp 0");
         dbRef.child('running_text').on('value', s => document.getElementById('running-text').innerText = s.val() || "Selamat datang...");
@@ -205,12 +211,12 @@
             if(s.val()) document.body.style.backgroundImage = `url('${s.val()}')`;
         });
 
-        // --- JUDUL MENU (BISA DIGANTI DARI HP) ---
+        // --- JUDUL MENU ---
         dbRef.child('title_jadwal').on('value', s => document.getElementById('title-jadwal').innerText = s.val() || "JADWAL SHOLAT & IMAM");
         dbRef.child('title_info').on('value', s => document.getElementById('title-info').innerText = s.val() || "ℹ️ INFO & PENGUMUMAN");
         dbRef.child('title_kas').on('value', s => document.getElementById('title-kas').innerText = s.val() || "💰 KAS MASJID");
 
-        // --- PENGATURAN WARNA (TEKS) ---
+        // --- PENGATURAN WARNA ---
         dbRef.child('warna_judul').on('value', s => document.getElementById('masjid-name').style.color = s.val() || "#ffc107");
         dbRef.child('warna_jam').on('value', s => document.getElementById('digital-time').style.color = s.val() || "#ffffff");
         dbRef.child('warna_tanggal').on('value', s => document.getElementById('date-info').style.color = s.val() || "#ffc107");
@@ -230,8 +236,6 @@
             let val = s.val() || "#ffffff";
             document.querySelectorAll('.info-list').forEach(el => el.style.color = val);
         });
-
-        // --- PENGATURAN WARNA (JUDUL MENU & RUNNING TEXT) ---
         dbRef.child('warna_title_jadwal').on('value', s => document.getElementById('title-jadwal').style.color = s.val() || "#ffc107");
         dbRef.child('warna_title_info').on('value', s => document.getElementById('title-info').style.color = s.val() || "#ffc107");
         dbRef.child('warna_title_kas').on('value', s => document.getElementById('title-kas').style.color = s.val() || "#ffc107");
