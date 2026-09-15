@@ -74,7 +74,6 @@
             color: #00ff00; 
             text-shadow: 2px 2px 6px #000; 
         }
-        /* HAPUS !IMPORTANT AGAR WARNA BISA DIGANTI DARI HP */
         .imam-name {
             color: #00e5ff; 
             text-shadow: 2px 2px 6px #000;
@@ -134,7 +133,7 @@
 <body>
 
     <header class="glass-panel">
-        <h1 id="masjid-name">MASJID AL-HIKMAH</h1>
+        <h1 id="masjid-name">MASJID ASYYUHADA</h1>
     </header>
 
     <div class="main-content">
@@ -211,7 +210,7 @@
         dbRef.child('title_info').on('value', s => document.getElementById('title-info').innerText = s.val() || "ℹ️ INFO & PENGUMUMAN");
         dbRef.child('title_kas').on('value', s => document.getElementById('title-kas').innerText = s.val() || "💰 KAS MASJID");
 
-        // --- PENGATURAN WARNA ---
+        // --- PENGATURAN WARNA (TEKS) ---
         dbRef.child('warna_judul').on('value', s => document.getElementById('masjid-name').style.color = s.val() || "#ffc107");
         dbRef.child('warna_jam').on('value', s => document.getElementById('digital-time').style.color = s.val() || "#ffffff");
         dbRef.child('warna_tanggal').on('value', s => document.getElementById('date-info').style.color = s.val() || "#ffc107");
@@ -231,6 +230,12 @@
             let val = s.val() || "#ffffff";
             document.querySelectorAll('.info-list').forEach(el => el.style.color = val);
         });
+
+        // --- PENGATURAN WARNA (JUDUL MENU & RUNNING TEXT) ---
+        dbRef.child('warna_title_jadwal').on('value', s => document.getElementById('title-jadwal').style.color = s.val() || "#ffc107");
+        dbRef.child('warna_title_info').on('value', s => document.getElementById('title-info').style.color = s.val() || "#ffc107");
+        dbRef.child('warna_title_kas').on('value', s => document.getElementById('title-kas').style.color = s.val() || "#ffc107");
+        dbRef.child('warna_running_text').on('value', s => document.getElementById('running-text').style.color = s.val() || "#ffffff");
 
         // --- BIKIN ANGKA JAM 1-12 OTOMATIS ---
         const clockFace = document.getElementById('clock-face');
