@@ -11,11 +11,14 @@
             margin: 0; padding: 0; color: #fff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex; flex-direction: column; 
-            height: 100vh; 
-            overflow: hidden; 
+            min-height: 100vh; /* Ubah dari height:100vh ke min-height agar bisa memanjang */
+            overflow-x: hidden; overflow-y: auto; /* Izinkan scroll ke bawah */
             background: url('https://images.unsplash.com/photo-1542816417-0983c9c9ad53?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed; 
             background-size: cover;
         }
+        /* Sembunyikan scrollbar biar tampilan tetap bersih */
+        body::-webkit-scrollbar { display: none; }
+        body { -ms-overflow-style: none; scrollbar-width: none; }
 
         .glass-panel {
             background: transparent !important;
@@ -56,7 +59,7 @@
         .right-panel {
             flex: 1.2; display: flex; flex-direction: column; gap: 25px; justify-content: center;
             text-align: right; 
-            overflow: hidden; 
+            overflow: visible; /* Ubah dari hidden ke visible */
         }
         .section-title { 
             color: #ffc107; font-size: 1.8rem; border-bottom: 3px solid #ffc107; 
@@ -102,6 +105,7 @@
         .second { width: 2px; height: 95px; margin-top: -95px; background: red; }
         .center-dot { position: absolute; top: 50%; left: 50%; width: 12px; height: 12px; background: #ffc107; border-radius: 50%; transform: translate(-50%, -50%); z-index: 11; }
 
+        /* AUTO-SHRINK UNTUK LAPTOP (Resolusi Pendek) */
         @media (max-height: 800px) {
             header { padding: 10px 20px; }
             header h1 { font-size: 2.2rem; }
@@ -116,17 +120,26 @@
             .right-panel { gap: 15px; }
             .section-title { font-size: 1.3rem; margin-bottom: 10px; }
             .schedule-table { font-size: 1.2rem; }
-            .schedule-table td { padding: 5px 0; } /* Dikecilin sedikit biar muat 7 baris */
+            .schedule-table td { padding: 5px 0; }
             .info-box h3 { font-size: 1.1rem; }
             .info-list { font-size: 1rem; }
             .kas-amount { font-size: 1.2rem; }
             .running-text { font-size: 1.2rem; }
         }
 
+        /* RESPONSIVE UNTUK HP (Tampilan Tegak) */
         @media (max-width: 768px) {
             body { height: auto; overflow-y: auto; }
-            .main-content { flex-direction: column; }
-            .right-panel { text-align: left; }
+            .main-content { flex-direction: column; padding: 0 20px 20px 20px; }
+            header { padding: 20px; text-align: center; }
+            header h1 { font-size: 2rem; }
+            .left-panel { align-items: center; }
+            .clock-container { width: 180px; height: 180px; }
+            .digital-clock { font-size: 3.5rem; }
+            .right-panel { text-align: center; }
+            .schedule-table { font-size: 1.3rem; }
+            .section-title { font-size: 1.5rem; }
+            .info-box { text-align: center; }
         }
     </style>
 </head>
