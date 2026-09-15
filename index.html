@@ -11,14 +11,11 @@
             margin: 0; padding: 0; color: #fff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex; flex-direction: column; 
-            min-height: 100vh; /* Ubah dari height ke min-height agar bisa scroll */
-            overflow-x: hidden; overflow-y: auto; /* Izinkan scroll ke bawah */
+            height: 100vh; /* Kunci tinggi 100% layar */
+            overflow: hidden; /* WAJIB: Larang scroll sama sekali */
             background: url('https://images.unsplash.com/photo-1542816417-0983c9c9ad53?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed; 
             background-size: cover;
         }
-        /* Sembunyikan Scrollbar biar tampilan tetap bersih */
-        body::-webkit-scrollbar { display: none; }
-        body { -ms-overflow-style: none; scrollbar-width: none; }
 
         /* Efek Kaca Buram (Glassmorphism) */
         .glass-panel {
@@ -29,40 +26,44 @@
             border-radius: 15px;
         }
         header {
-            padding: 10px 30px; text-align: center; margin: 15px;
+            padding: 15px 30px; text-align: center; margin: 15px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            flex-shrink: 0; /* Larang header menyusut */
         }
-        header h1 { margin: 0; color: #ffc107; font-size: 2.2rem; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        header h1 { margin: 0; color: #ffc107; font-size: 2.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
         .main-content {
             display: flex; flex: 1; padding: 0 15px; gap: 15px;
+            min-height: 0; /* Trik Flexbox agar tidak overflow */
         }
         .left-panel {
             flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
-        .clock-container { position: relative; width: 200px; height: 200px; margin-bottom: 15px; }
-        .digital-clock { font-size: 3rem; color: #4CAF50; text-shadow: 0 0 15px rgba(76,175,80,0.5); font-weight: bold; }
-        .date-info { font-size: 1.2rem; color: #e0e0e0; margin-top: 10px; text-align: center; }
+        .clock-container { position: relative; width: 220px; height: 220px; margin-bottom: 15px; flex-shrink: 0; }
+        .digital-clock { font-size: 3.5rem; color: #4CAF50; text-shadow: 0 0 15px rgba(76,175,80,0.5); font-weight: bold; }
+        .date-info { font-size: 1.3rem; color: #e0e0e0; margin-top: 5px; text-align: center; }
         
         .right-panel {
             flex: 1.3; padding: 20px; display: flex; flex-direction: column; gap: 15px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            overflow: hidden; /* Jangan biarkan panel kanan yang scroll */
         }
-        .section-title { color: #ffc107; font-size: 1.4rem; border-bottom: 2px solid #ffc107; padding-bottom: 5px; margin-bottom: 10px; }
-        .schedule-table { width: 100%; font-size: 1.2rem; border-collapse: collapse; }
-        .schedule-table td { padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .section-title { color: #ffc107; font-size: 1.5rem; border-bottom: 2px solid #ffc107; padding-bottom: 5px; margin-bottom: 10px; }
+        .schedule-table { width: 100%; font-size: 1.3rem; border-collapse: collapse; }
+        .schedule-table td { padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .schedule-table .time { color: #4CAF50; font-weight: bold; text-align: right; }
         
-        .info-box { background: rgba(255, 193, 7, 0.1); padding: 12px; border-radius: 10px; border-left: 5px solid #ffc107; }
-        .info-box h3 { margin: 0 0 8px 0; color: #ffc107; font-size: 1.1rem; }
-        .info-list { font-size: 1rem; line-height: 1.5; color: #e0e0e0; }
-        .kas-amount { color: #4CAF50; font-weight: bold; font-size: 1.3rem; margin-top: 5px; }
+        .info-box { background: rgba(255, 193, 7, 0.1); padding: 15px; border-radius: 10px; border-left: 5px solid #ffc107; }
+        .info-box h3 { margin: 0 0 8px 0; color: #ffc107; font-size: 1.2rem; }
+        .info-list { font-size: 1.1rem; line-height: 1.5; color: #e0e0e0; }
+        .kas-amount { color: #4CAF50; font-weight: bold; font-size: 1.4rem; margin-top: 5px; }
 
         footer {
             margin: 15px; padding: 12px; overflow: hidden; white-space: nowrap;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            flex-shrink: 0; /* Larang footer menyusut */
         }
-        .running-text { display: inline-block; font-size: 1.4rem; color: #fff; animation: scroll 25s linear infinite; }
+        .running-text { display: inline-block; font-size: 1.5rem; color: #fff; animation: scroll 25s linear infinite; }
         @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
         
         /* Analog Clock CSS */
@@ -73,27 +74,34 @@
         .second { width: 2px; height: 95px; margin-top: -95px; background: red; }
         .center-dot { position: absolute; top: 50%; left: 50%; width: 12px; height: 12px; background: #ffc107; border-radius: 50%; transform: translate(-50%, -50%); }
 
+        /* AUTO-SHRINK UNTUK LAPTOP (Resolusi Pendek) */
+        @media (max-height: 800px) {
+            header { margin: 10px; padding: 8px; }
+            header h1 { font-size: 1.8rem; }
+            .main-content { padding: 0 10px; gap: 10px; }
+            .left-panel { padding: 10px; }
+            .clock-container { width: 150px; height: 150px; margin-bottom: 10px; }
+            .hour { height: 35px; margin-top: -35px; }
+            .minute { height: 55px; margin-top: -55px; }
+            .second { height: 65px; margin-top: -65px; }
+            .digital-clock { font-size: 2.5rem; }
+            .date-info { font-size: 1rem; }
+            .right-panel { padding: 15px; gap: 10px; }
+            .section-title { font-size: 1.2rem; margin-bottom: 5px; }
+            .schedule-table { font-size: 1.1rem; }
+            .schedule-table td { padding: 4px 0; }
+            .info-box { padding: 10px; }
+            .info-box h3 { font-size: 1rem; }
+            .info-list { font-size: 0.9rem; line-height: 1.3; }
+            .kas-amount { font-size: 1.1rem; }
+            footer { margin: 10px; padding: 8px; }
+            .running-text { font-size: 1.2rem; }
+        }
+
         /* RESPONSIVE UNTUK HP */
         @media (max-width: 768px) {
             body { height: auto; overflow-y: auto; }
             .main-content { flex-direction: column; }
-            header { margin: 10px; padding: 10px; }
-            header h1 { font-size: 1.5rem; }
-            .left-panel { padding: 20px; }
-            .clock-container { width: 150px; height: 150px; }
-            .hour { height: 35px; margin-top: -35px; }
-            .minute { height: 55px; margin-top: -55px; }
-            .second { height: 65px; margin-top: -65px; }
-            .digital-clock { font-size: 2.2rem; }
-            .date-info { font-size: 1rem; }
-            .right-panel { padding: 20px; gap: 15px; }
-            .section-title { font-size: 1.3rem; }
-            .schedule-table { font-size: 1.1rem; }
-            .info-box h3 { font-size: 1rem; }
-            .info-list { font-size: 0.9rem; }
-            .kas-amount { font-size: 1.2rem; }
-            footer { margin: 10px; padding: 10px; }
-            .running-text { font-size: 1.2rem; }
         }
     </style>
 </head>
