@@ -74,9 +74,10 @@
             color: #00ff00; 
             text-shadow: 2px 2px 6px #000; 
         }
+        /* HAPUS !IMPORTANT AGAR WARNA BISA DIGANTI DARI HP */
         .imam-name {
-            color: #00e5ff !important; 
-            text-shadow: 2px 2px 6px #000 !important;
+            color: #00e5ff; 
+            text-shadow: 2px 2px 6px #000;
         }
         
         .info-box { padding: 15px 0; border-top: 2px solid rgba(255,255,255,0.5); }
@@ -205,7 +206,12 @@
             if(s.val()) document.body.style.backgroundImage = `url('${s.val()}')`;
         });
 
-        // --- PENGATURAN WARNA (DARI FIREBASE) ---
+        // --- JUDUL MENU (BISA DIGANTI DARI HP) ---
+        dbRef.child('title_jadwal').on('value', s => document.getElementById('title-jadwal').innerText = s.val() || "JADWAL SHOLAT & IMAM");
+        dbRef.child('title_info').on('value', s => document.getElementById('title-info').innerText = s.val() || "ℹ️ INFO & PENGUMUMAN");
+        dbRef.child('title_kas').on('value', s => document.getElementById('title-kas').innerText = s.val() || "💰 KAS MASJID");
+
+        // --- PENGATURAN WARNA ---
         dbRef.child('warna_judul').on('value', s => document.getElementById('masjid-name').style.color = s.val() || "#ffc107");
         dbRef.child('warna_jam').on('value', s => document.getElementById('digital-time').style.color = s.val() || "#ffffff");
         dbRef.child('warna_tanggal').on('value', s => document.getElementById('date-info').style.color = s.val() || "#ffc107");
