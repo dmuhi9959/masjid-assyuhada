@@ -17,58 +17,77 @@
             background-size: cover;
         }
 
-        /* Hilangkan Efek Kaca, Pakai Transparan Tipis Saja */
+        /* HILANGKAN SEMUA KOTAK & BLUR (TRANSPARAN 100%) */
         .glass-panel {
-            background: rgba(0, 0, 0, 0.15); /* Sangat tipis, background tetap kelihatan */
-            backdrop-filter: none; /* Blur dihilangkan */
-            -webkit-backdrop-filter: none;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 15px;
+            background: transparent !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            border: none !important;
+            box-shadow: none !important;
         }
+
+        /* HEADER */
         header {
-            padding: 15px 30px; text-align: center; margin: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            padding: 20px 40px; text-align: left; 
             flex-shrink: 0; 
         }
-        /* Text Shadow sangat pekat agar terbaca di wallpaper apapun */
-        header h1 { margin: 0; color: #ffc107; font-size: 2.5rem; text-shadow: 3px 3px 6px #000, 0 0 10px #000; }
+        header h1 { 
+            margin: 0; color: #ffffff; font-size: 3rem; 
+            /* Bayangan hitam pekat agar terbaca di wallpaper apapun */
+            text-shadow: 3px 3px 6px #000, -1px -1px 4px #000, 0 0 15px #000; 
+        }
+
         .main-content {
-            display: flex; flex: 1; padding: 0 15px; gap: 15px;
+            display: flex; flex: 1; padding: 0 40px 20px 40px; gap: 40px;
             min-height: 0; 
         }
+        
+        /* KIRI: JAM */
         .left-panel {
-            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            flex: 1; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; 
         }
         .clock-container { position: relative; width: 220px; height: 220px; margin-bottom: 15px; flex-shrink: 0; }
-        .digital-clock { font-size: 3.5rem; color: #4CAF50; text-shadow: 3px 3px 6px #000, 0 0 15px #000; font-weight: bold; }
-        .date-info { font-size: 1.3rem; color: #ffffff; margin-top: 5px; text-align: center; text-shadow: 2px 2px 4px #000; }
+        .digital-clock { 
+            font-size: 4.5rem; color: #ffffff; font-weight: bold; 
+            text-shadow: 3px 3px 8px #000, -1px -1px 4px #000; 
+            line-height: 1;
+        }
+        .date-info { 
+            font-size: 1.5rem; color: #ffc107; margin-top: 10px; 
+            text-shadow: 2px 2px 4px #000; 
+        }
         
+        /* KANAN: JADWAL & INFO */
         .right-panel {
-            flex: 1.3; padding: 20px; display: flex; flex-direction: column; gap: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            flex: 1.2; display: flex; flex-direction: column; gap: 25px; justify-content: center;
+            text-align: right; /* Teks rata kanan seperti gambar referensi */
             overflow: hidden; 
         }
-        .section-title { color: #ffc107; font-size: 1.5rem; border-bottom: 2px solid #ffc107; padding-bottom: 5px; margin-bottom: 10px; text-shadow: 2px 2px 4px #000; }
-        .schedule-table { width: 100%; font-size: 1.3rem; border-collapse: collapse; }
-        .schedule-table td { padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.2); text-shadow: 2px 2px 4px #000; }
-        .schedule-table .time { color: #4CAF50; font-weight: bold; text-align: right; }
+        .section-title { 
+            color: #ffffff; font-size: 1.8rem; border-bottom: 3px solid #ffc107; 
+            padding-bottom: 10px; margin-bottom: 15px; 
+            text-shadow: 2px 2px 4px #000; 
+        }
+        .schedule-table { width: 100%; font-size: 1.6rem; border-collapse: collapse; }
+        .schedule-table td { padding: 10px 0; text-shadow: 2px 2px 4px #000; }
+        .schedule-table .time { color: #4CAF50; font-weight: bold; }
         
-        .info-box { background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 10px; border-left: 5px solid #ffc107; }
-        .info-box h3 { margin: 0 0 8px 0; color: #ffc107; font-size: 1.2rem; text-shadow: 2px 2px 4px #000; }
-        .info-list { font-size: 1.1rem; line-height: 1.5; color: #ffffff; text-shadow: 1px 1px 3px #000; }
-        .kas-amount { color: #4CAF50; font-weight: bold; font-size: 1.4rem; margin-top: 5px; text-shadow: 2px 2px 4px #000; }
+        .info-box { padding: 15px 0; border-top: 2px solid rgba(255,255,255,0.5); }
+        .info-box h3 { margin: 0 0 10px 0; color: #ffc107; font-size: 1.4rem; text-shadow: 2px 2px 4px #000; }
+        .info-list { font-size: 1.3rem; line-height: 1.5; color: #ffffff; text-shadow: 2px 2px 4px #000; }
+        .kas-amount { color: #4CAF50; font-weight: bold; font-size: 1.6rem; margin-top: 5px; text-shadow: 2px 2px 4px #000; }
 
+        /* FOOTER RUNNING TEXT */
         footer {
-            margin: 15px; padding: 12px; overflow: hidden; white-space: nowrap;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            background: rgba(0, 0, 0, 0.6); /* Hanya bagian bawah aja yang dikasih gelap sedikit */
+            padding: 15px 0; overflow: hidden; white-space: nowrap;
             flex-shrink: 0; 
         }
         .running-text { display: inline-block; font-size: 1.5rem; color: #fff; animation: scroll 25s linear infinite; text-shadow: 2px 2px 4px #000; }
         @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
         
         /* Analog Clock CSS */
-        .clock-face { width: 100%; height: 100%; border-radius: 50%; background: rgba(0,0,0,0.4); border: 8px solid #ffc107; position: relative; box-shadow: 0 0 20px rgba(255,193,7,0.3); }
+        .clock-face { width: 100%; height: 100%; border-radius: 50%; background: rgba(0,0,0,0.4); border: 8px solid #ffc107; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
         .hand { position: absolute; top: 50%; left: 50%; transform-origin: bottom; background: #fff; border-radius: 10px; transform: translateX(-50%) rotate(0deg); }
         .hour { width: 6px; height: 50px; margin-top: -50px; }
         .minute { width: 4px; height: 80px; margin-top: -80px; background: #4CAF50; }
@@ -77,25 +96,22 @@
 
         /* AUTO-SHRINK UNTUK LAPTOP */
         @media (max-height: 800px) {
-            header { margin: 10px; padding: 8px; }
-            header h1 { font-size: 1.8rem; }
-            .main-content { padding: 0 10px; gap: 10px; }
-            .left-panel { padding: 10px; }
-            .clock-container { width: 150px; height: 150px; margin-bottom: 10px; }
+            header { padding: 10px 20px; }
+            header h1 { font-size: 2.2rem; }
+            .main-content { padding: 0 20px 10px 20px; gap: 20px; }
+            .clock-container { width: 150px; height: 150px; }
             .hour { height: 35px; margin-top: -35px; }
             .minute { height: 55px; margin-top: -55px; }
             .second { height: 65px; margin-top: -65px; }
-            .digital-clock { font-size: 2.5rem; }
-            .date-info { font-size: 1rem; }
-            .right-panel { padding: 15px; gap: 10px; }
-            .section-title { font-size: 1.2rem; margin-bottom: 5px; }
-            .schedule-table { font-size: 1.1rem; }
-            .schedule-table td { padding: 4px 0; }
-            .info-box { padding: 10px; }
-            .info-box h3 { font-size: 1rem; }
-            .info-list { font-size: 0.9rem; line-height: 1.3; }
-            .kas-amount { font-size: 1.1rem; }
-            footer { margin: 10px; padding: 8px; }
+            .digital-clock { font-size: 3rem; }
+            .date-info { font-size: 1.1rem; }
+            .right-panel { gap: 15px; }
+            .section-title { font-size: 1.3rem; margin-bottom: 10px; }
+            .schedule-table { font-size: 1.2rem; }
+            .schedule-table td { padding: 6px 0; }
+            .info-box h3 { font-size: 1.1rem; }
+            .info-list { font-size: 1rem; }
+            .kas-amount { font-size: 1.2rem; }
             .running-text { font-size: 1.2rem; }
         }
 
@@ -103,6 +119,7 @@
         @media (max-width: 768px) {
             body { height: auto; overflow-y: auto; }
             .main-content { flex-direction: column; }
+            .right-panel { text-align: left; }
         }
     </style>
 </head>
@@ -145,7 +162,7 @@
                 <div class="info-list" id="info-text">Kajian Rutin Setiap Ba'da Maghrib. Dipersilakan kepada jamaah untuk menjaga kebersihan masjid.</div>
             </div>
 
-            <div class="info-box" style="border-left-color: #4CAF50; background: rgba(0, 0, 0, 0.3);">
+            <div class="info-box">
                 <h3 style="color: #4CAF50;">💰 KAS MASJID</h3>
                 <div class="kas-amount" id="kas-masjid">Rp 0</div>
             </div>
