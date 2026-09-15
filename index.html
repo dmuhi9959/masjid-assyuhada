@@ -17,7 +17,6 @@
             background-size: cover;
         }
 
-        /* HILANGKAN SEMUA KOTAK & BLUR (TRANSPARAN 100%) */
         .glass-panel {
             background: transparent !important;
             backdrop-filter: none !important;
@@ -26,7 +25,6 @@
             box-shadow: none !important;
         }
 
-        /* HEADER */
         header {
             padding: 20px 40px; text-align: left; 
             flex-shrink: 0; 
@@ -41,7 +39,6 @@
             min-height: 0; 
         }
         
-        /* KIRI: JAM */
         .left-panel {
             flex: 1; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; 
         }
@@ -56,7 +53,6 @@
             text-shadow: 2px 2px 6px #000; 
         }
         
-        /* KANAN: JADWAL & INFO */
         .right-panel {
             flex: 1.2; display: flex; flex-direction: column; gap: 25px; justify-content: center;
             text-align: right; 
@@ -70,16 +66,16 @@
         .schedule-table { width: 100%; font-size: 1.6rem; border-collapse: collapse; }
         .schedule-table td { 
             padding: 10px 0; 
-            color: #ffffff; /* Warna putih bersih */
+            color: #ffffff; 
             font-weight: bold;
-            text-shadow: 2px 2px 6px #000, -1px -1px 4px #000; /* Bayangan sangat pekat */
+            text-shadow: 2px 2px 6px #000, -1px -1px 4px #000; 
         }
         .schedule-table .time { 
-            color: #00ff00; /* Warna hijau terang neon */
+            color: #00ff00; 
             text-shadow: 2px 2px 6px #000; 
         }
         .imam-name {
-            color: #00e5ff !important; /* Warna biru terang agar nama imam kelihatan */
+            color: #00e5ff !important; 
             text-shadow: 2px 2px 6px #000 !important;
         }
         
@@ -88,7 +84,6 @@
         .info-list { font-size: 1.3rem; line-height: 1.5; color: #ffffff; font-weight: bold; text-shadow: 2px 2px 6px #000; }
         .kas-amount { color: #00ff00; font-weight: bold; font-size: 1.6rem; margin-top: 5px; text-shadow: 2px 2px 6px #000; }
 
-        /* FOOTER RUNNING TEXT */
         footer {
             background: rgba(0, 0, 0, 0.6); 
             padding: 15px 0; overflow: hidden; white-space: nowrap;
@@ -97,25 +92,16 @@
         .running-text { display: inline-block; font-size: 1.5rem; color: #fff; animation: scroll 25s linear infinite; text-shadow: 2px 2px 4px #000; }
         @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
         
-        /* Analog Clock CSS */
         .clock-face { width: 100%; height: 100%; border-radius: 50%; background: rgba(0,0,0,0.6); border: 8px solid #ffc107; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
-        
-        /* CSS Angka Jam (1-12) */
         .clock-num {
-            position: absolute;
-            color: #ffffff;
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-shadow: 1px 1px 3px #000;
+            position: absolute; color: #ffffff; font-size: 1.5rem; font-weight: bold; text-shadow: 1px 1px 3px #000;
         }
-        
         .hand { position: absolute; top: 50%; left: 50%; transform-origin: bottom; background: #fff; border-radius: 10px; transform: translateX(-50%) rotate(0deg); z-index: 10; }
         .hour { width: 6px; height: 50px; margin-top: -50px; }
         .minute { width: 4px; height: 80px; margin-top: -80px; background: #00ff00; }
         .second { width: 2px; height: 95px; margin-top: -95px; background: red; }
         .center-dot { position: absolute; top: 50%; left: 50%; width: 12px; height: 12px; background: #ffc107; border-radius: 50%; transform: translate(-50%, -50%); z-index: 11; }
 
-        /* AUTO-SHRINK UNTUK LAPTOP */
         @media (max-height: 800px) {
             header { padding: 10px 20px; }
             header h1 { font-size: 2.2rem; }
@@ -137,7 +123,6 @@
             .running-text { font-size: 1.2rem; }
         }
 
-        /* RESPONSIVE UNTUK HP */
         @media (max-width: 768px) {
             body { height: auto; overflow-y: auto; }
             .main-content { flex-direction: column; }
@@ -152,11 +137,9 @@
     </header>
 
     <div class="main-content">
-        <!-- KIRI: JAM -->
         <div class="left-panel glass-panel">
             <div class="clock-container">
                 <div class="clock-face" id="clock-face">
-                    <!-- Angka Jam akan diisi oleh JavaScript -->
                     <div class="hand hour" id="hour-hand"></div>
                     <div class="hand minute" id="minute-hand"></div>
                     <div class="hand second" id="second-hand"></div>
@@ -167,26 +150,25 @@
             <div class="date-info" id="date-info">Hari, Tanggal</div>
         </div>
 
-        <!-- KANAN: JADWAL & INFO -->
         <div class="right-panel glass-panel">
             <div>
-                <div class="section-title">JADWAL SHOLAT & IMAM</div>
+                <div class="section-title" id="title-jadwal">JADWAL SHOLAT & IMAM</div>
                 <table class="schedule-table">
-                    <tr><td>Subuh</td><td id="subuh-imam" class="imam-name"></td><td class="time" id="subuh">04:30</td></tr>
-                    <tr><td>Dzuhur</td><td id="dzuhur-imam" class="imam-name"></td><td class="time" id="dzuhur">12:00</td></tr>
-                    <tr><td>Ashar</td><td id="ashar-imam" class="imam-name"></td><td class="time" id="ashar">15:15</td></tr>
-                    <tr><td>Maghrib</td><td id="maghrib-imam" class="imam-name"></td><td class="time" id="maghrib">18:00</td></tr>
-                    <tr><td>Isya</td><td id="isya-imam" class="imam-name"></td><td class="time" id="isya">19:10</td></tr>
+                    <tr><td class="nama-sholat">Subuh</td><td id="subuh-imam" class="imam-name"></td><td class="time" id="subuh">04:30</td></tr>
+                    <tr><td class="nama-sholat">Dzuhur</td><td id="dzuhur-imam" class="imam-name"></td><td class="time" id="dzuhur">12:00</td></tr>
+                    <tr><td class="nama-sholat">Ashar</td><td id="ashar-imam" class="imam-name"></td><td class="time" id="ashar">15:15</td></tr>
+                    <tr><td class="nama-sholat">Maghrib</td><td id="maghrib-imam" class="imam-name"></td><td class="time" id="maghrib">18:00</td></tr>
+                    <tr><td class="nama-sholat">Isya</td><td id="isya-imam" class="imam-name"></td><td class="time" id="isya">19:10</td></tr>
                 </table>
             </div>
             
             <div class="info-box">
-                <h3>ℹ️ INFO & PENGUMUMAN</h3>
+                <h3 id="title-info">ℹ️ INFO & PENGUMUMAN</h3>
                 <div class="info-list" id="info-text">Kajian Rutin Setiap Ba'da Maghrib. Dipersilakan kepada jamaah untuk menjaga kebersihan masjid.</div>
             </div>
 
             <div class="info-box">
-                <h3 style="color: #ffc107;">💰 KAS MASJID</h3>
+                <h3 id="title-kas">💰 KAS MASJID</h3>
                 <div class="kas-amount" id="kas-masjid">Rp 0</div>
             </div>
         </div>
@@ -204,6 +186,7 @@
         firebase.initializeApp(firebaseConfig);
         const dbRef = firebase.database().ref('masjid');
 
+        // Teks & Jam
         dbRef.child('nama_masjid').on('value', s => document.getElementById('masjid-name').innerText = s.val() || "MASJID AL-HIKMAH");
         dbRef.child('subuh').on('value', s => document.getElementById('subuh').innerText = s.val() || "04:30");
         dbRef.child('dzuhur').on('value', s => document.getElementById('dzuhur').innerText = s.val() || "12:00");
@@ -222,15 +205,35 @@
             if(s.val()) document.body.style.backgroundImage = `url('${s.val()}')`;
         });
 
+        // --- PENGATURAN WARNA (DARI FIREBASE) ---
+        dbRef.child('warna_judul').on('value', s => document.getElementById('masjid-name').style.color = s.val() || "#ffc107");
+        dbRef.child('warna_jam').on('value', s => document.getElementById('digital-time').style.color = s.val() || "#ffffff");
+        dbRef.child('warna_tanggal').on('value', s => document.getElementById('date-info').style.color = s.val() || "#ffc107");
+        dbRef.child('warna_jadwal').on('value', s => {
+            let val = s.val() || "#ffffff";
+            document.querySelectorAll('.nama-sholat').forEach(el => el.style.color = val);
+        });
+        dbRef.child('warna_waktu').on('value', s => {
+            let val = s.val() || "#00ff00";
+            document.querySelectorAll('.time').forEach(el => el.style.color = val);
+        });
+        dbRef.child('warna_imam').on('value', s => {
+            let val = s.val() || "#00e5ff";
+            document.querySelectorAll('.imam-name').forEach(el => el.style.color = val);
+        });
+        dbRef.child('warna_info').on('value', s => {
+            let val = s.val() || "#ffffff";
+            document.querySelectorAll('.info-list').forEach(el => el.style.color = val);
+        });
+
         // --- BIKIN ANGKA JAM 1-12 OTOMATIS ---
         const clockFace = document.getElementById('clock-face');
         for(let i = 1; i <= 12; i++) {
             const num = document.createElement('div');
             num.className = 'clock-num';
             num.innerText = i;
-            // Hitung posisi melingkar angka
             const angle = (i * 30) * (Math.PI / 180); 
-            const x = Math.sin(angle) * 40; // 40% dari pusat
+            const x = Math.sin(angle) * 40; 
             const y = -Math.cos(angle) * 40; 
             num.style.left = `calc(50% + ${x}%)`;
             num.style.top = `calc(50% + ${y}%)`;
