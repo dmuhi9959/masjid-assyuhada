@@ -19,6 +19,11 @@
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .status { text-align: center; margin-top: 15px; font-weight: bold; color: #28a745; display: none; }
         hr { border: 0; border-top: 1px solid #eee; margin: 25px 0; }
+        
+        /* CSS Khusus Color Picker */
+        .color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .color-item { display: flex; flex-direction: column; }
+        input[type="color"] { width: 100%; height: 45px; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; padding: 2px; background: #fff; }
     </style>
 </head>
 <body>
@@ -43,6 +48,43 @@
 
     <button onclick="simpanUtama()">SIMPAN PERUBAHAN</button>
     <div class="status" id="status-utama">✅ Berhasil disimpan!</div>
+
+    <hr>
+
+    <h2>🎨 PENGATURAN WARNA TEKS</h2>
+    <div class="color-grid">
+        <div class="color-item">
+            <label>Judul Masjid</label>
+            <input type="color" id="warna_judul" value="#ffc107">
+        </div>
+        <div class="color-item">
+            <label>Jam Digital</label>
+            <input type="color" id="warna_jam" value="#ffffff">
+        </div>
+        <div class="color-item">
+            <label>Tanggal</label>
+            <input type="color" id="warna_tanggal" value="#ffc107">
+        </div>
+        <div class="color-item">
+            <label>Nama Sholat</label>
+            <input type="color" id="warna_jadwal" value="#ffffff">
+        </div>
+        <div class="color-item">
+            <label>Waktu Sholat</label>
+            <input type="color" id="warna_waktu" value="#00ff00">
+        </div>
+        <div class="color-item">
+            <label>Nama Imam</label>
+            <input type="color" id="warna_imam" value="#00e5ff">
+        </div>
+        <div class="color-item">
+            <label>Info & Pengumuman</label>
+            <input type="color" id="warna_info" value="#ffffff">
+        </div>
+    </div>
+
+    <button onclick="simpanWarna()" style="background: #007bff; color: white; margin-top: 20px;">SIMPAN WARNA</button>
+    <div class="status" id="status-warna">✅ Warna disimpan!</div>
 
     <hr>
 
@@ -86,12 +128,22 @@
     firebase.initializeApp(firebaseConfig);
     const dbRef = firebase.database().ref('masjid');
 
+    // Load Data ke Form
     dbRef.once('value').then((snapshot) => {
         const data = snapshot.val();
         if(data) {
             document.getElementById('nama_masjid').value = data.nama_masjid || '';
             document.getElementById('background_url').value = data.background_url || '';
             document.getElementById('running_text').value = data.running_text || '';
+            
+            document.getElementById('warna_judul').value = data.warna_judul || '#ffc107';
+            document.getElementById('warna_jam').value = data.warna_jam || '#ffffff';
+            document.getElementById('warna_tanggal').value = data.warna_tanggal || '#ffc107';
+            document.getElementById('warna_jadwal').value = data.warna_jadwal || '#ffffff';
+            document.getElementById('warna_waktu').value = data.warna_waktu || '#00ff00';
+            document.getElementById('warna_imam').value = data.warna_imam || '#00e5ff';
+            document.getElementById('warna_info').value = data.warna_info || '#ffffff';
+
             document.getElementById('subuh').value = data.subuh || '';
             document.getElementById('imam_subuh').value = data.imam_subuh || '';
             document.getElementById('dzuhur').value = data.dzuhur || '';
@@ -114,6 +166,22 @@
             running_text: document.getElementById('running_text').value
         }).then(() => {
             const status = document.getElementById('status-utama');
+            status.style.display = 'block';
+            setTimeout(() => status.style.display = 'none', 3000);
+        });
+    }
+
+    function simpanWarna() {
+        dbRef.update({
+            warna_judul: document.getElementById('warna_judul').value,
+            warna_jam: document.getElementById('warna_jam').value,
+            warna_tanggal: document.getElementById('warna_tanggal').value,
+            warna_jadwal: document.getElementById('warna_jadwal').value,
+            warna_waktu: document.getElementById('warna_waktu').value,
+            warna_imam: document.getElementById('warna_imam').value,
+            warna_info: document.getElementById('warna_info').value
+        }).then(() => {
+            const status = document.getElementById('status-warna');
             status.style.display = 'block';
             setTimeout(() => status.style.display = 'none', 3000);
         });
