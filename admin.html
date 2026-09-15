@@ -19,8 +19,6 @@
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .status { text-align: center; margin-top: 15px; font-weight: bold; color: #28a745; display: none; }
         hr { border: 0; border-top: 1px solid #eee; margin: 25px 0; }
-        
-        /* CSS Khusus Color Picker */
         .color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .color-item { display: flex; flex-direction: column; }
         input[type="color"] { width: 100%; height: 45px; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; padding: 2px; background: #fff; }
@@ -35,28 +33,24 @@
         <label>Nama Masjid</label>
         <input type="text" id="nama_masjid" placeholder="Masjid Al-Hikmah">
     </div>
-
     <div class="form-group">
-        <label>Link Foto Wallpaper (Copas link dari Google/Browser)</label>
+        <label>Link Foto Wallpaper</label>
         <input type="url" id="background_url" placeholder="https://example.com/foto-masjid.jpg">
     </div>
-
     <div class="form-group">
         <label>Teks Berjalan (Running Text)</label>
         <textarea id="running_text" placeholder="Selamat datang di masjid..."></textarea>
     </div>
-
-    <!-- MENU EDIT JUDUL -->
     <div class="form-group">
-        <label>Judul Jadwal (Default: JADWAL SHOLAT & IMAM)</label>
+        <label>Judul Jadwal</label>
         <input type="text" id="title_jadwal" placeholder="JADWAL SHOLAT & IMAM">
     </div>
     <div class="form-group">
-        <label>Judul Info (Default: ℹ️ INFO & PENGUMUMAN)</label>
+        <label>Judul Info</label>
         <input type="text" id="title_info" placeholder="ℹ️ INFO & PENGUMUMAN">
     </div>
     <div class="form-group">
-        <label>Judul Kas (Default: 💰 KAS MASJID)</label>
+        <label>Judul Kas</label>
         <input type="text" id="title_kas" placeholder="💰 KAS MASJID">
     </div>
 
@@ -67,50 +61,17 @@
 
     <h2>🎨 PENGATURAN WARNA TEKS</h2>
     <div class="color-grid">
-        <div class="color-item">
-            <label>Judul Masjid</label>
-            <input type="color" id="warna_judul" value="#ffc107">
-        </div>
-        <div class="color-item">
-            <label>Jam Digital</label>
-            <input type="color" id="warna_jam" value="#ffffff">
-        </div>
-        <div class="color-item">
-            <label>Tanggal</label>
-            <input type="color" id="warna_tanggal" value="#ffc107">
-        </div>
-        <div class="color-item">
-            <label>Nama Sholat</label>
-            <input type="color" id="warna_jadwal" value="#ffffff">
-        </div>
-        <div class="color-item">
-            <label>Waktu Sholat</label>
-            <input type="color" id="warna_waktu" value="#00ff00">
-        </div>
-        <div class="color-item">
-            <label>Nama Imam</label>
-            <input type="color" id="warna_imam" value="#00e5ff">
-        </div>
-        <div class="color-item">
-            <label>Info & Pengumuman</label>
-            <input type="color" id="warna_info" value="#ffffff">
-        </div>
-        <div class="color-item">
-            <label>Judul Jadwal</label>
-            <input type="color" id="warna_title_jadwal" value="#ffc107">
-        </div>
-        <div class="color-item">
-            <label>Judul Info</label>
-            <input type="color" id="warna_title_info" value="#ffc107">
-        </div>
-        <div class="color-item">
-            <label>Judul Kas</label>
-            <input type="color" id="warna_title_kas" value="#ffc107">
-        </div>
-        <div class="color-item">
-            <label>Teks Berjalan</label>
-            <input type="color" id="warna_running_text" value="#ffffff">
-        </div>
+        <div class="color-item"><label>Judul Masjid</label><input type="color" id="warna_judul" value="#ffc107"></div>
+        <div class="color-item"><label>Jam Digital</label><input type="color" id="warna_jam" value="#ffffff"></div>
+        <div class="color-item"><label>Tanggal</label><input type="color" id="warna_tanggal" value="#ffc107"></div>
+        <div class="color-item"><label>Nama Sholat</label><input type="color" id="warna_jadwal" value="#ffffff"></div>
+        <div class="color-item"><label>Waktu Sholat</label><input type="color" id="warna_waktu" value="#00ff00"></div>
+        <div class="color-item"><label>Nama Imam</label><input type="color" id="warna_imam" value="#00e5ff"></div>
+        <div class="color-item"><label>Info & Pengumuman</label><input type="color" id="warna_info" value="#ffffff"></div>
+        <div class="color-item"><label>Judul Jadwal</label><input type="color" id="warna_title_jadwal" value="#ffc107"></div>
+        <div class="color-item"><label>Judul Info</label><input type="color" id="warna_title_info" value="#ffc107"></div>
+        <div class="color-item"><label>Judul Kas</label><input type="color" id="warna_title_kas" value="#ffc107"></div>
+        <div class="color-item"><label>Teks Berjalan</label><input type="color" id="warna_running_text" value="#ffffff"></div>
     </div>
 
     <button onclick="simpanWarna()" style="background: #007bff; color: white; margin-top: 20px;">SIMPAN WARNA</button>
@@ -120,9 +81,15 @@
 
     <h2>🕌 JADWAL SHOLAT & IMAM</h2>
     <div class="grid-2">
+        <div class="form-group"><label>Imsak</label><input type="text" id="imsak" placeholder="04:20"></div>
+        <div class="form-group"></div> <!-- Kosong biar rapi -->
+        
         <div class="form-group"><label>Subuh</label><input type="text" id="subuh" placeholder="04:30"></div>
         <div class="form-group"><label>Imam Subuh</label><input type="text" id="imam_subuh" placeholder="Ustadz..."></div>
-        
+
+        <div class="form-group"><label>Syuruk</label><input type="text" id="syuruk" placeholder="05:45"></div>
+        <div class="form-group"></div> <!-- Kosong biar rapi -->
+
         <div class="form-group"><label>Dzuhur</label><input type="text" id="dzuhur" placeholder="12:00"></div>
         <div class="form-group"><label>Imam Dzuhur</label><input type="text" id="imam_dzuhur" placeholder="Ustadz..."></div>
 
@@ -140,7 +107,6 @@
         <label>Info & Pengumuman</label>
         <textarea id="info_text" placeholder="Kajian rutin ba'da maghrib..."></textarea>
     </div>
-
     <div class="form-group">
         <label>Kas Masjid</label>
         <input type="text" id="kas_masjid" placeholder="Rp 10.000.000">
@@ -158,7 +124,6 @@
     firebase.initializeApp(firebaseConfig);
     const dbRef = firebase.database().ref('masjid');
 
-    // Load Data ke Form
     dbRef.once('value').then((snapshot) => {
         const data = snapshot.val();
         if(data) {
@@ -182,16 +147,19 @@
             document.getElementById('warna_title_kas').value = data.warna_title_kas || '#ffc107';
             document.getElementById('warna_running_text').value = data.warna_running_text || '#ffffff';
 
+            document.getElementById('imsak').value = data.imsak || '';
             document.getElementById('subuh').value = data.subuh || '';
-            document.getElementById('imam_subuh').value = data.imam_subuh || '';
+            document.getElementById('syuruk').value = data.syuruk || '';
             document.getElementById('dzuhur').value = data.dzuhur || '';
-            document.getElementById('imam_dzuhur').value = data.imam_dzuhur || '';
+            document.getElementById('imam_subuh').value = data.imam_subuh || '';
             document.getElementById('ashar').value = data.ashar || '';
-            document.getElementById('imam_ashar').value = data.imam_ashar || '';
+            document.getElementById('imam_dzuhur').value = data.imam_dzuhur || '';
             document.getElementById('maghrib').value = data.maghrib || '';
-            document.getElementById('imam_maghrib').value = data.imam_maghrib || '';
+            document.getElementById('imam_ashar').value = data.imam_ashar || '';
             document.getElementById('isya').value = data.isya || '';
+            document.getElementById('imam_maghrib').value = data.imam_maghrib || '';
             document.getElementById('imam_isya').value = data.imam_isya || '';
+            
             document.getElementById('info_text').value = data.info_text || '';
             document.getElementById('kas_masjid').value = data.kas_masjid || '';
         }
@@ -234,15 +202,17 @@
 
     function simpanJadwal() {
         dbRef.update({
+            imsak: document.getElementById('imsak').value,
             subuh: document.getElementById('subuh').value,
-            imam_subuh: document.getElementById('imam_subuh').value,
+            syuruk: document.getElementById('syuruk').value,
             dzuhur: document.getElementById('dzuhur').value,
-            imam_dzuhur: document.getElementById('imam_dzuhur').value,
+            imam_subuh: document.getElementById('imam_subuh').value,
             ashar: document.getElementById('ashar').value,
-            imam_ashar: document.getElementById('imam_ashar').value,
+            imam_dzuhur: document.getElementById('imam_dzuhur').value,
             maghrib: document.getElementById('maghrib').value,
-            imam_maghrib: document.getElementById('imam_maghrib').value,
+            imam_ashar: document.getElementById('imam_ashar').value,
             isya: document.getElementById('isya').value,
+            imam_maghrib: document.getElementById('imam_maghrib').value,
             imam_isya: document.getElementById('imam_isya').value,
             info_text: document.getElementById('info_text').value,
             kas_masjid: document.getElementById('kas_masjid').value
