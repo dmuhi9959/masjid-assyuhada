@@ -95,6 +95,22 @@
             <label>Info & Pengumuman</label>
             <input type="color" id="warna_info" value="#ffffff">
         </div>
+        <div class="color-item">
+            <label>Judul Jadwal</label>
+            <input type="color" id="warna_title_jadwal" value="#ffc107">
+        </div>
+        <div class="color-item">
+            <label>Judul Info</label>
+            <input type="color" id="warna_title_info" value="#ffc107">
+        </div>
+        <div class="color-item">
+            <label>Judul Kas</label>
+            <input type="color" id="warna_title_kas" value="#ffc107">
+        </div>
+        <div class="color-item">
+            <label>Teks Berjalan</label>
+            <input type="color" id="warna_running_text" value="#ffffff">
+        </div>
     </div>
 
     <button onclick="simpanWarna()" style="background: #007bff; color: white; margin-top: 20px;">SIMPAN WARNA</button>
@@ -161,6 +177,10 @@
             document.getElementById('warna_waktu').value = data.warna_waktu || '#00ff00';
             document.getElementById('warna_imam').value = data.warna_imam || '#00e5ff';
             document.getElementById('warna_info').value = data.warna_info || '#ffffff';
+            document.getElementById('warna_title_jadwal').value = data.warna_title_jadwal || '#ffc107';
+            document.getElementById('warna_title_info').value = data.warna_title_info || '#ffc107';
+            document.getElementById('warna_title_kas').value = data.warna_title_kas || '#ffc107';
+            document.getElementById('warna_running_text').value = data.warna_running_text || '#ffffff';
 
             document.getElementById('subuh').value = data.subuh || '';
             document.getElementById('imam_subuh').value = data.imam_subuh || '';
@@ -200,7 +220,11 @@
             warna_jadwal: document.getElementById('warna_jadwal').value,
             warna_waktu: document.getElementById('warna_waktu').value,
             warna_imam: document.getElementById('warna_imam').value,
-            warna_info: document.getElementById('warna_info').value
+            warna_info: document.getElementById('warna_info').value,
+            warna_title_jadwal: document.getElementById('warna_title_jadwal').value,
+            warna_title_info: document.getElementById('warna_title_info').value,
+            warna_title_kas: document.getElementById('warna_title_kas').value,
+            warna_running_text: document.getElementById('warna_running_text').value
         }).then(() => {
             const status = document.getElementById('status-warna');
             status.style.display = 'block';
