@@ -46,6 +46,20 @@
         <textarea id="running_text" placeholder="Selamat datang di masjid..."></textarea>
     </div>
 
+    <!-- MENU EDIT JUDUL -->
+    <div class="form-group">
+        <label>Judul Jadwal (Default: JADWAL SHOLAT & IMAM)</label>
+        <input type="text" id="title_jadwal" placeholder="JADWAL SHOLAT & IMAM">
+    </div>
+    <div class="form-group">
+        <label>Judul Info (Default: ℹ️ INFO & PENGUMUMAN)</label>
+        <input type="text" id="title_info" placeholder="ℹ️ INFO & PENGUMUMAN">
+    </div>
+    <div class="form-group">
+        <label>Judul Kas (Default: 💰 KAS MASJID)</label>
+        <input type="text" id="title_kas" placeholder="💰 KAS MASJID">
+    </div>
+
     <button onclick="simpanUtama()">SIMPAN PERUBAHAN</button>
     <div class="status" id="status-utama">✅ Berhasil disimpan!</div>
 
@@ -136,6 +150,10 @@
             document.getElementById('background_url').value = data.background_url || '';
             document.getElementById('running_text').value = data.running_text || '';
             
+            document.getElementById('title_jadwal').value = data.title_jadwal || '';
+            document.getElementById('title_info').value = data.title_info || '';
+            document.getElementById('title_kas').value = data.title_kas || '';
+
             document.getElementById('warna_judul').value = data.warna_judul || '#ffc107';
             document.getElementById('warna_jam').value = data.warna_jam || '#ffffff';
             document.getElementById('warna_tanggal').value = data.warna_tanggal || '#ffc107';
@@ -163,7 +181,10 @@
         dbRef.update({
             nama_masjid: document.getElementById('nama_masjid').value,
             background_url: document.getElementById('background_url').value,
-            running_text: document.getElementById('running_text').value
+            running_text: document.getElementById('running_text').value,
+            title_jadwal: document.getElementById('title_jadwal').value,
+            title_info: document.getElementById('title_info').value,
+            title_kas: document.getElementById('title_kas').value
         }).then(() => {
             const status = document.getElementById('status-utama');
             status.style.display = 'block';
