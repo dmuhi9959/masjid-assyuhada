@@ -42,6 +42,7 @@
             font-weight: bold; font-size: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
         #sound-btn { background: #ffc107; color: black; }
+        #test-warn-btn { background: #dc3545; color: white; }
 
         .main-content {
             display: flex; padding: 0 3vw; gap: 3vw; min-height: 0; 
@@ -123,6 +124,7 @@
     <header class="glass-panel">
         <h1 id="masjid-name">MASJID AL-HIKMAH</h1>
         <div class="header-right">
+            <button id="test-warn-btn" class="header-btn" onclick="showWarningOverlay('SUBUH')">⚠️ Tes Peringatan</button>
             <button id="sound-btn" class="header-btn" onclick="aktifkanSuaraAdzan()">🔊 Aktifkan Otomatis</button>
         </div>
     </header>
@@ -203,25 +205,20 @@
         function aktifkanSuaraAdzan() {
             isSoundActive = true;
             document.getElementById('sound-btn').style.display = 'none';
+            alert("Suara Adzan diaktifkan! Adzan akan berbunyi otomatis saat waktu sholat tiba.");
         }
 
-        // Fungsi Tampilkan Layar Peringatan (2 menit sebelum adzan)
         function showWarningOverlay(namaSholat) {
             document.getElementById('warning-prayer-name').innerText = namaSholat;
             document.getElementById('warning-overlay').style.display = 'flex';
-            
-            // Hilang setelah 15 detik
             setTimeout(() => {
                 document.getElementById('warning-overlay').style.display = 'none';
             }, 15000);
         }
 
-        // Fungsi Tampilkan Layar Gelap Adzan
         function showAdzanOverlay(namaSholat) {
             document.getElementById('adzan-prayer-name').innerText = namaSholat;
             document.getElementById('adzan-overlay').style.display = 'flex';
-            
-            // Otomatis hilang setelah 2 menit (120000 ms)
             setTimeout(() => {
                 document.getElementById('adzan-overlay').style.display = 'none';
             }, 120000);
@@ -283,7 +280,6 @@
             clockFace.appendChild(num);
         }
 
-        // Helper untuk convert "HH:MM" ke menit total
         function timeToMinutes(t) {
             if (!t || !t.includes(':')) return -1;
             let parts = t.split(':');
@@ -316,8 +312,6 @@
             document.getElementById('second-hand').style.transform = `translateX(-50%) rotate(${secondDeg}deg)`;
 
             let currentTimeStr = String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0');
-            let currentTimeMinus1 = String(hours).padStart(2, '0') + ":" + String(Math.max(0, minutes - 1)).padStart(2, '0');
-
             let nowMinutes = hours * 60 + minutes;
 
             if (currentTimeStr === "00:00") {
@@ -326,40 +320,43 @@
             }
 
             // CEK PERINGATAN 2 MENIT SEBELUM ADZAN
-            if (seconds === 0) {
-                let prayers = [
-                    {name: "SUBUH", time: prayerTimes.subuh, key: "subuh"},
-                    {name: "DZUHUR", time: prayerTimes.dzuhur, key: "dzuhur"},
-                    {name: "ASHAR", time: prayerTimes.ashar, key: "ashar"},
-                    {name: "MAGHRIB", time: prayerTimes.maghrib, key: "maghrib"},
-                    {name: "ISYA", time: prayerTimes.isya, key: "isya"}
-                ];
-                
-                prayers.forEach(p => {
-                    let pMin = timeToMinutes(p.time);
-                    if (nowMinutes === pMin - 2 && !warningPlayed[p.key]) {
-                        showWarningOverlay(p.name);
-                        warningPlayed[p.key] = true;
-                    }
-                });
-            }
+            let prayers = [
+                {name: "SUBUH", time: prayerTimes.subuh, key: "subuh"},
+                {name: "DZUHUR", time: prayerTimes.dzuhur, key: "dzuhur"},
+                {name: "ASHAR", time: prayerTimes.ashar, key: "ashar"},
+                {name: "MAGHRIB", time: prayerTimes.maghrib, key: "maghrib"},
+                {name: "ISYA", time: prayerTimes.isya, key: "isya"}
+            ];
+            
+            prayers.forEach(p => {
+                let pMin = timeToMinutes(p.time);
+                if (nowMinutes === pMin - 2 && !warningPlayed[p.key]) {
+                    showWarningOverlay(p.name);
+                    warningPlayed[p.key] = true;
+                }
+            });
 
-            // CEK WAKTUNYA ADZAN
+            // CEK WAKTUNYA ADZAN (HANYA JIKA TOMBOL AKTIF DIKLIK)
             if (isSoundActive) {
-                if ((currentTimeStr === prayerTimes.subuh || currentTimeMinus1 === prayerTimes.subuh) && !adzanPlayed.subuh) {
-                    adzanSubuhAudio.play(); adzanPlayed.subuh = true;
+                if (currentTimeStr === prayerTimes.subuh && !adzanPlayed.subuh) {
+                    adzanSubuhAudio.play().catch(e => console.log("Audio Error")); 
+                    adzanPlayed.subuh = true;
                     showAdzanOverlay("SUBUH");
-                } else if ((currentTimeStr === prayerTimes.dzuhur || currentTimeMinus1 === prayerTimes.dzuhur) && !adzanPlayed.dzuhur) {
-                    adzanBiasaAudio.play(); adzanPlayed.dzuhur = true;
+                } else if (currentTimeStr === prayerTimes.dzuhur && !adzanPlayed.dzuhur) {
+                    adzanBiasaAudio.play().catch(e => console.log("Audio Error")); 
+                    adzanPlayed.dzuhur = true;
                     showAdzanOverlay("DZUHUR");
-                } else if ((currentTimeStr === prayerTimes.ashar || currentTimeMinus1 === prayerTimes.ashar) && !adzanPlayed.ashar) {
-                    adzanBiasaAudio.play(); adzanPlayed.ashar = true;
+                } else if (currentTimeStr === prayerTimes.ashar && !adzanPlayed.ashar) {
+                    adzanBiasaAudio.play().catch(e => console.log("Audio Error")); 
+                    adzanPlayed.ashar = true;
                     showAdzanOverlay("ASHAR");
-                } else if ((currentTimeStr === prayerTimes.maghrib || currentTimeMinus1 === prayerTimes.maghrib) && !adzanPlayed.maghrib) {
-                    adzanBiasaAudio.play(); adzanPlayed.maghrib = true;
+                } else if (currentTimeStr === prayerTimes.maghrib && !adzanPlayed.maghrib) {
+                    adzanBiasaAudio.play().catch(e => console.log("Audio Error")); 
+                    adzanPlayed.maghrib = true;
                     showAdzanOverlay("MAGHRIB");
-                } else if ((currentTimeStr === prayerTimes.isya || currentTimeMinus1 === prayerTimes.isya) && !adzanPlayed.isya) {
-                    adzanBiasaAudio.play(); adzanPlayed.isya = true;
+                } else if (currentTimeStr === prayerTimes.isya && !adzanPlayed.isya) {
+                    adzanBiasaAudio.play().catch(e => console.log("Audio Error")); 
+                    adzanPlayed.isya = true;
                     showAdzanOverlay("ISYA");
                 }
             }
