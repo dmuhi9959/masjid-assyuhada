@@ -11,7 +11,7 @@
             margin: 0; padding: 0; color: #fff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: grid; 
-            grid-template-rows: auto 1fr auto auto;
+            grid-template-rows: auto 1fr auto;
             height: 100vh; 
             overflow: hidden; 
             background: url('https://images.unsplash.com/photo-1542816417-0983c9c9ad53?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed; 
@@ -42,7 +42,6 @@
             font-weight: bold; font-size: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
         #sound-btn { background: #ffc107; color: black; }
-        #test-btn { background: #28a745; color: white; }
 
         .main-content {
             display: flex; padding: 0 3vw; gap: 3vw; min-height: 0; 
@@ -59,31 +58,30 @@
         .info-list { font-size: clamp(0.9rem, 2vh, 1.3rem); line-height: 1.5; color: #ffffff; font-weight: bold; text-shadow: 2px 2px 6px #000; }
         .kas-amount { color: #00ff00; font-weight: bold; font-size: clamp(1rem, 2.8vh, 1.6rem); margin-top: 0.5vh; text-shadow: 2px 2px 6px #000; }
 
-        /* DIPERBAIKI: Margin bawah dihilangkan agar menempel dengan footer */
+        /* DIPERBAIKI: Background hitam dihapus, margin diatur agar menempel ke bawah */
         .bottom-schedule { 
-            background: rgba(0, 0, 0, 0.8); 
             margin: 0 3vw; 
-            padding: 1.5vh 1vw; 
-            border-radius: 15px 15px 0 0;
+            padding: 1vh 1vw; 
             display: flex; justify-content: space-between; align-items: stretch; gap: 5px; 
+            background: transparent; 
         }
         .prayer-item { 
             flex: 1; text-align: center; display: flex; flex-direction: column; justify-content: center;
-            border-right: 1px solid rgba(255,255,255,0.1); 
+            border-right: 1px solid rgba(255,255,255,0.2); 
             padding: 1vh 5px; border-radius: 8px; 
-            transition: background-color 0.5s; /* Animasi halus saat warna berubah */
+            transition: background-color 0.5s; 
         }
         .prayer-item:last-child { border-right: none; }
         .p-name { font-size: clamp(0.9rem, 1.8vh, 1.3rem); color: #ffffff; font-weight: bold; text-shadow: 2px 2px 4px #000; margin-bottom: 5px; }
         .p-time { font-size: clamp(1.1rem, 2.5vh, 1.8rem); color: #00ff00; font-weight: bold; text-shadow: 2px 2px 6px #000; }
         .p-imam { font-size: clamp(0.7rem, 1.5vh, 1rem); color: #00e5ff; text-shadow: 1px 1px 3px #000; margin-top: 5px; min-height: 1.5vh; }
 
-        /* DIPERBAIKI: Mengikuti lebar jadwal di atasnya agar sejajar */
+        /* DIPERBAIKI: Background hitam dipindahkan ke Running Text saja */
         footer { 
-            background: rgba(0, 0, 0, 0.9); 
-            margin: 0 3vw; 
+            background: rgba(0, 0, 0, 0.8); 
+            margin: 1.5vh 3vw; 
             padding: 1.5vh 0; 
-            border-radius: 0 0 15px 15px;
+            border-radius: 15px;
             overflow: hidden; white-space: nowrap; 
         }
         .running-text { display: inline-block; font-size: clamp(1rem, 2.5vh, 1.5rem); color: #fff; animation: scroll 25s linear infinite; text-shadow: 2px 2px 4px #000; }
@@ -103,9 +101,8 @@
             header { flex-direction: column; gap: 10px; }
             .left-panel { align-items: center; }
             .right-panel { text-align: center; }
-            .bottom-schedule { flex-wrap: wrap; justify-content: center; gap: 10px; border-radius: 15px; }
+            .bottom-schedule { flex-wrap: wrap; justify-content: center; gap: 10px; }
             .prayer-item { flex: 1 1 40%; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; }
-            footer { border-radius: 0 0 15px 15px; }
         }
     </style>
 </head>
@@ -114,7 +111,6 @@
     <header class="glass-panel">
         <h1 id="masjid-name">MASJID AL-HIKMAH</h1>
         <div class="header-right">
-            <button id="test-btn" class="header-btn" onclick="tesAdzan()">🔔 Tes Adzan</button>
             <button id="sound-btn" class="header-btn" onclick="aktifkanSuaraAdzan()">🔊 Aktifkan Otomatis</button>
         </div>
     </header>
@@ -174,16 +170,12 @@
         const adzanSubuhAudio = new Audio('adzan-subuh.mp3');
         const adzanBiasaAudio = new Audio('adzan-biasa.mp3');
         
-        adzanSubuhAudio.onerror = () => alert("File adzan-subuh.mp3 TIDAK DITEMUKAN! Cek nama file di GitHub.");
-        adzanBiasaAudio.onerror = () => alert("File adzan-biasa.mp3 TIDAK DITEMUKAN! Cek nama file di GitHub.");
+        adzanSubuhAudio.onerror = () => console.log("File adzan-subuh.mp3 tidak ditemukan.");
+        adzanBiasaAudio.onerror = () => console.log("File adzan-biasa.mp3 tidak ditemukan.");
 
         function aktifkanSuaraAdzan() {
             isSoundActive = true;
             document.getElementById('sound-btn').style.display = 'none';
-        }
-
-        function tesAdzan() {
-            adzanBiasaAudio.play().catch(e => alert("Gagal! Browser memblokir suara atau file tidak ada."));
         }
 
         dbRef.child('nama_masjid').on('value', s => document.getElementById('masjid-name').innerText = s.val() || "MASJID AL-HIKMAH");
@@ -220,7 +212,6 @@
         dbRef.child('warna_title_kas').on('value', s => document.getElementById('title-kas').style.color = s.val() || "#ffc107");
         dbRef.child('warna_running_text').on('value', s => document.getElementById('running-text').style.color = s.val() || "#ffffff");
 
-        // --- WARNA TEMA WAKTU SHOLAT ---
         dbRef.child('warna_bg_imsak').on('value', s => document.getElementById('bg-imsak').style.backgroundColor = s.val() || "transparent");
         dbRef.child('warna_bg_subuh').on('value', s => document.getElementById('bg-subuh').style.backgroundColor = s.val() || "transparent");
         dbRef.child('warna_bg_syuruk').on('value', s => document.getElementById('bg-syuruk').style.backgroundColor = s.val() || "transparent");
