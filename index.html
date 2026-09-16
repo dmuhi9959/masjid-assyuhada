@@ -58,30 +58,20 @@
         .info-list { font-size: clamp(0.9rem, 2vh, 1.3rem); line-height: 1.5; color: #ffffff; font-weight: bold; text-shadow: 2px 2px 6px #000; }
         .kas-amount { color: #00ff00; font-weight: bold; font-size: clamp(1rem, 2.8vh, 1.6rem); margin-top: 0.5vh; text-shadow: 2px 2px 6px #000; }
 
-        /* DIPERBAIKI: Background hitam dihapus, margin diatur agar menempel ke bawah */
         .bottom-schedule { 
-            margin: 0 3vw; 
-            padding: 1vh 1vw; 
-            display: flex; justify-content: space-between; align-items: stretch; gap: 5px; 
-            background: transparent; 
+            margin: 0 3vw; padding: 1vh 1vw; display: flex; justify-content: space-between; align-items: stretch; gap: 5px; 
         }
         .prayer-item { 
             flex: 1; text-align: center; display: flex; flex-direction: column; justify-content: center;
-            border-right: 1px solid rgba(255,255,255,0.2); 
-            padding: 1vh 5px; border-radius: 8px; 
-            transition: background-color 0.5s; 
+            border-right: 1px solid rgba(255,255,255,0.2); padding: 1vh 5px; border-radius: 8px; transition: background-color 0.5s; 
         }
         .prayer-item:last-child { border-right: none; }
         .p-name { font-size: clamp(0.9rem, 1.8vh, 1.3rem); color: #ffffff; font-weight: bold; text-shadow: 2px 2px 4px #000; margin-bottom: 5px; }
         .p-time { font-size: clamp(1.1rem, 2.5vh, 1.8rem); color: #00ff00; font-weight: bold; text-shadow: 2px 2px 6px #000; }
         .p-imam { font-size: clamp(0.7rem, 1.5vh, 1rem); color: #00e5ff; text-shadow: 1px 1px 3px #000; margin-top: 5px; min-height: 1.5vh; }
 
-        /* DIPERBAIKI: Background hitam dipindahkan ke Running Text saja */
         footer { 
-            background: rgba(0, 0, 0, 0.8); 
-            margin: 1.5vh 3vw; 
-            padding: 1.5vh 0; 
-            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.8); margin: 1.5vh 3vw; padding: 1.5vh 0; border-radius: 15px;
             overflow: hidden; white-space: nowrap; 
         }
         .running-text { display: inline-block; font-size: clamp(1rem, 2.5vh, 1.5rem); color: #fff; animation: scroll 25s linear infinite; text-shadow: 2px 2px 4px #000; }
@@ -94,6 +84,28 @@
         .minute { width: 4px; height: 40%; margin-top: -40%; background: #00ff00; }
         .second { width: 2px; height: 45%; margin-top: -45%; background: red; }
         .center-dot { position: absolute; top: 50%; left: 50%; width: 12px; height: 12px; background: #ffc107; border-radius: 50%; transform: translate(-50%, -50%); z-index: 11; }
+
+        /* EFEK LAYAR GELAP PERINGATAN (2 MENIT SEBELUM ADZAN) */
+        #warning-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.95); z-index: 9998;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center;
+        }
+        #warning-overlay h2 { font-size: clamp(1.5rem, 5vh, 3rem); color: #ffc107; margin: 0; letter-spacing: 2px; }
+        #warning-overlay h1 { font-size: clamp(2.5rem, 10vh, 6rem); color: #ffffff; margin: 20px 0; text-shadow: 0 0 20px #ffc107; text-transform: uppercase; }
+        #warning-overlay p { font-size: clamp(1rem, 3vh, 2rem); color: #ccc; margin: 0; }
+
+        /* EFEK LAYAR GELAP SAAT ADZAN */
+        #adzan-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.98); z-index: 9999;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center;
+        }
+        #adzan-overlay h2 { font-size: clamp(2rem, 8vh, 5rem); color: #ccc; margin: 0; letter-spacing: 3px; }
+        #adzan-overlay h1 { font-size: clamp(3rem, 12vh, 8rem); color: #ffc107; margin: 20px 0; text-shadow: 0 0 20px #ffc107; text-transform: uppercase; }
+        #adzan-overlay p { font-size: clamp(1.5rem, 4vh, 3rem); color: #4CAF50; margin: 0; font-weight: bold; }
 
         @media (max-width: 768px) {
             body { height: auto; overflow-y: auto; display: flex; flex-direction: column; }
@@ -155,6 +167,20 @@
         <div class="running-text" id="running-text">Selamat datang di Masjid Al-Hikmah. Mohon matikan HP sebelum memasuki area masjid. Jangan lupa berwudhu.</div>
     </footer>
 
+    <!-- OVERLAY PERINGATAN (2 MENIT SEBELUM ADZAN) -->
+    <div id="warning-overlay">
+        <h2>2 MENIT LAGI MASUK WAKTU ADZAN</h2>
+        <h1 id="warning-prayer-name">SUBUH</h1>
+        <p>Mohon siap-siap menuju Masjid</p>
+    </div>
+
+    <!-- OVERLAY ADZAN -->
+    <div id="adzan-overlay">
+        <h2>WAKTUNYA SHOLAT</h2>
+        <h1 id="adzan-prayer-name">SUBUH</h1>
+        <p>Silakan segera menuju Masjid</p>
+    </div>
+
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyC4CQMl5l1n1voweOgQouMD1kJcpHs-esU",
@@ -165,6 +191,7 @@
 
         let prayerTimes = { subuh: "04:30", dzuhur: "12:00", ashar: "15:15", maghrib: "18:00", isya: "19:10" };
         let adzanPlayed = { subuh: false, dzuhur: false, ashar: false, maghrib: false, isya: false };
+        let warningPlayed = { subuh: false, dzuhur: false, ashar: false, maghrib: false, isya: false };
         let isSoundActive = false;
 
         const adzanSubuhAudio = new Audio('adzan-subuh.mp3');
@@ -176,6 +203,28 @@
         function aktifkanSuaraAdzan() {
             isSoundActive = true;
             document.getElementById('sound-btn').style.display = 'none';
+        }
+
+        // Fungsi Tampilkan Layar Peringatan (2 menit sebelum adzan)
+        function showWarningOverlay(namaSholat) {
+            document.getElementById('warning-prayer-name').innerText = namaSholat;
+            document.getElementById('warning-overlay').style.display = 'flex';
+            
+            // Hilang setelah 15 detik
+            setTimeout(() => {
+                document.getElementById('warning-overlay').style.display = 'none';
+            }, 15000);
+        }
+
+        // Fungsi Tampilkan Layar Gelap Adzan
+        function showAdzanOverlay(namaSholat) {
+            document.getElementById('adzan-prayer-name').innerText = namaSholat;
+            document.getElementById('adzan-overlay').style.display = 'flex';
+            
+            // Otomatis hilang setelah 2 menit (120000 ms)
+            setTimeout(() => {
+                document.getElementById('adzan-overlay').style.display = 'none';
+            }, 120000);
         }
 
         dbRef.child('nama_masjid').on('value', s => document.getElementById('masjid-name').innerText = s.val() || "MASJID AL-HIKMAH");
@@ -234,6 +283,13 @@
             clockFace.appendChild(num);
         }
 
+        // Helper untuk convert "HH:MM" ke menit total
+        function timeToMinutes(t) {
+            if (!t || !t.includes(':')) return -1;
+            let parts = t.split(':');
+            return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+        }
+
         function updateClock() {
             const now = new Date();
             const hours = now.getHours();
@@ -262,21 +318,49 @@
             let currentTimeStr = String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0');
             let currentTimeMinus1 = String(hours).padStart(2, '0') + ":" + String(Math.max(0, minutes - 1)).padStart(2, '0');
 
+            let nowMinutes = hours * 60 + minutes;
+
             if (currentTimeStr === "00:00") {
                 adzanPlayed = { subuh: false, dzuhur: false, ashar: false, maghrib: false, isya: false };
+                warningPlayed = { subuh: false, dzuhur: false, ashar: false, maghrib: false, isya: false };
             }
 
+            // CEK PERINGATAN 2 MENIT SEBELUM ADZAN
+            if (seconds === 0) {
+                let prayers = [
+                    {name: "SUBUH", time: prayerTimes.subuh, key: "subuh"},
+                    {name: "DZUHUR", time: prayerTimes.dzuhur, key: "dzuhur"},
+                    {name: "ASHAR", time: prayerTimes.ashar, key: "ashar"},
+                    {name: "MAGHRIB", time: prayerTimes.maghrib, key: "maghrib"},
+                    {name: "ISYA", time: prayerTimes.isya, key: "isya"}
+                ];
+                
+                prayers.forEach(p => {
+                    let pMin = timeToMinutes(p.time);
+                    if (nowMinutes === pMin - 2 && !warningPlayed[p.key]) {
+                        showWarningOverlay(p.name);
+                        warningPlayed[p.key] = true;
+                    }
+                });
+            }
+
+            // CEK WAKTUNYA ADZAN
             if (isSoundActive) {
                 if ((currentTimeStr === prayerTimes.subuh || currentTimeMinus1 === prayerTimes.subuh) && !adzanPlayed.subuh) {
                     adzanSubuhAudio.play(); adzanPlayed.subuh = true;
+                    showAdzanOverlay("SUBUH");
                 } else if ((currentTimeStr === prayerTimes.dzuhur || currentTimeMinus1 === prayerTimes.dzuhur) && !adzanPlayed.dzuhur) {
                     adzanBiasaAudio.play(); adzanPlayed.dzuhur = true;
+                    showAdzanOverlay("DZUHUR");
                 } else if ((currentTimeStr === prayerTimes.ashar || currentTimeMinus1 === prayerTimes.ashar) && !adzanPlayed.ashar) {
                     adzanBiasaAudio.play(); adzanPlayed.ashar = true;
+                    showAdzanOverlay("ASHAR");
                 } else if ((currentTimeStr === prayerTimes.maghrib || currentTimeMinus1 === prayerTimes.maghrib) && !adzanPlayed.maghrib) {
                     adzanBiasaAudio.play(); adzanPlayed.maghrib = true;
+                    showAdzanOverlay("MAGHRIB");
                 } else if ((currentTimeStr === prayerTimes.isya || currentTimeMinus1 === prayerTimes.isya) && !adzanPlayed.isya) {
                     adzanBiasaAudio.play(); adzanPlayed.isya = true;
+                    showAdzanOverlay("ISYA");
                 }
             }
         }
