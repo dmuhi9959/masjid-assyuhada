@@ -11,13 +11,13 @@
             margin: 0; padding: 0; color: #fff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: grid; 
-            grid-template-rows: auto 1fr auto;
+            /* DIPERBAIKI: Tambah baris auto agar jadwal menempel di bawah */
+            grid-template-rows: auto 1fr auto auto; 
             height: 100vh; 
             overflow: hidden; 
             background-color: #000;
         }
 
-        /* Layer Background Slideshow */
         .bg-layer {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background-size: cover; background-position: center; z-index: -1;
@@ -64,8 +64,10 @@
         .info-list { font-size: clamp(0.9rem, 2vh, 1.3rem); line-height: 1.5; color: #ffffff; font-weight: bold; text-shadow: 2px 2px 6px #000; }
         .kas-amount { color: #00ff00; font-weight: bold; font-size: clamp(1rem, 2.8vh, 1.6rem); margin-top: 0.5vh; text-shadow: 2px 2px 6px #000; }
 
+        /* DIPERBAIKI: Turunkan jadwal agar menempel ke bawah */
         .bottom-schedule { 
             margin: 0 3vw; padding: 1vh 1vw; display: flex; justify-content: space-between; align-items: stretch; gap: 5px; 
+            align-self: end; /* Dorong ke bawah */
         }
         .prayer-item { 
             flex: 1; text-align: center; display: flex; flex-direction: column; justify-content: center;
@@ -267,38 +269,30 @@
         dbRef.child('warna_bg_maghrib').on('value', s => document.getElementById('bg-maghrib').style.backgroundColor = s.val() || "transparent");
         dbRef.child('warna_bg_isya').on('value', s => document.getElementById('bg-isya').style.backgroundColor = s.val() || "transparent");
 
-        // --- LOGIKA SLIDESHOW WALLPAPER ---
         let bgImages = [];
         let currentBg = 0;
-        let bgLayer = 1;
+        let activeBgLayer = 1;
+        let slideIntervalMs = 10000; 
+        let lastSlideTime = Date.now();
 
-        dbRef.child('background_url_1').on('value', s => { if(s.val()) { bgImages[0] = s.val(); startSlideshow(); } });
-        dbRef.child('background_url_2').on('value', s => { if(s.val()) { bgImages[1] = s.val(); startSlideshow(); } });
-        dbRef.child('background_url_3').on('value', s => { if(s.val()) { bgImages[2] = s.val(); startSlideshow(); } });
+        dbRef.child('background_url_1').on('value', s => { bgImages[0] = s.val(); updateBgDisplay(); });
+        dbRef.child('background_url_2').on('value', s => { bgImages[1] = s.val(); updateBgDisplay(); });
+        dbRef.child('background_url_3').on('value', s => { bgImages[2] = s.val(); updateBgDisplay(); });
+        dbRef.child('slide_interval').on('value', s => { slideIntervalMs = (s.val() || 10) * 1000; });
 
-        function startSlideshow() {
+        function updateBgDisplay() {
             let validBgs = bgImages.filter(Boolean);
             if (validBgs.length === 0) return;
 
-            document.getElementById('bg1').style.backgroundImage = `url('${validBgs[0]}')`;
-            document.getElementById('bg1').style.opacity = 1;
-            document.getElementById('bg2').style.opacity = 0;
-            bgLayer = 2;
-            currentBg = 1;
+            let img = validBgs[currentBg % validBgs.length];
+            let activeLayer = document.getElementById('bg' + activeBgLayer);
+            let inactiveLayer = document.getElementById('bg' + (activeBgLayer === 1 ? 2 : 1));
 
-            setInterval(() => {
-                if (validBgs.length <= 1) return;
-                let img = validBgs[currentBg % validBgs.length];
-                let activeLayer = document.getElementById('bg' + bgLayer);
-                let inactiveLayer = document.getElementById('bg' + (bgLayer === 1 ? 2 : 1));
+            inactiveLayer.style.backgroundImage = `url('${img}')`;
+            inactiveLayer.style.opacity = 1;
+            activeLayer.style.opacity = 0;
 
-                inactiveLayer.style.backgroundImage = `url('${img}')`;
-                inactiveLayer.style.opacity = 1;
-                activeLayer.style.opacity = 0;
-
-                bgLayer = (bgLayer === 1 ? 2 : 1);
-                currentBg++;
-            }, 10000); // Ganti tiap 10 detik
+            activeBgLayer = (activeBgLayer === 1 ? 2 : 1);
         }
 
         const clockFace = document.getElementById('clock-face');
@@ -345,6 +339,15 @@
             document.getElementById('hour-hand').style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
             document.getElementById('minute-hand').style.transform = `translateX(-50%) rotate(${minuteDeg}deg)`;
             document.getElementById('second-hand').style.transform = `translateX(-50%) rotate(${secondDeg}deg)`;
+
+            if (Date.now() - lastSlideTime > slideIntervalMs) {
+                let validBgs = bgImages.filter(Boolean);
+                if (validBgs.length > 1) {
+                    currentBg++;
+                    updateBgDisplay();
+                }
+                lastSlideTime = Date.now();
+            }
 
             let currentTimeStr = String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0');
             let nowMinutes = hours * 60 + minutes;
