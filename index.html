@@ -48,8 +48,8 @@
             font-weight: bold; font-size: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
         #sound-btn { background: #ffc107; color: black; }
+        #tartil-btn { background: #17a2b8; color: white; }
 
-        /* DIPERBAIKI: Pakai Flex 1 agar memaksa turun ke bawah */
         .main-content {
             flex: 1; 
             display: flex; padding: 0 3vw; gap: 3vw; min-height: 0; 
@@ -63,10 +63,9 @@
         .right-panel { flex: 1.2; display: flex; flex-direction: column; gap: 2vh; justify-content: center; text-align: right; overflow: hidden; }
         .info-box { padding: 1.5vh 0; border-top: 2px solid rgba(255,255,255,0.5); }
         .info-box h3 { margin: 0 0 1vh 0; color: #ffc107; font-size: clamp(1rem, 2.2vh, 1.4rem); text-shadow: 2px 2px 6px #000; }
-        .info-list { font-size: clamp(0.9rem, 2vh, 1.3rem); line-height: 1.5; color: #ffffff; font-weight: bold; text-shadow: 2px 2px 6px #000; transition: opacity 0.5s ease-in-out; } /* Efek fade untuk slide info */
+        .info-list { font-size: clamp(0.9rem, 2vh, 1.3rem); line-height: 1.5; color: #ffffff; font-weight: bold; text-shadow: 2px 2px 6px #000; transition: opacity 0.5s ease-in-out; }
         .kas-amount { color: #00ff00; font-weight: bold; font-size: clamp(1rem, 2.8vh, 1.6rem); margin-top: 0.5vh; text-shadow: 2px 2px 6px #000; }
 
-        /* DIPERBAIKI: flex-shrink 0 agar tidak tertekan ke atas */
         .bottom-schedule { 
             flex-shrink: 0;
             margin: 0 3vw; padding: 1vh 1vw; display: flex; justify-content: space-between; align-items: stretch; gap: 5px; 
@@ -114,7 +113,7 @@
         }
         #adzan-overlay h2 { font-size: clamp(2rem, 8vh, 5rem); color: #ccc; margin: 0; letter-spacing: 3px; }
         #adzan-overlay h1 { font-size: clamp(3rem, 12vh, 8rem); color: #ffc107; margin: 20px 0; text-shadow: 0 0 20px #ffc107; text-transform: uppercase; }
-        #adzan-overlay p { font-size: clamp(1.5rem, 4vh, 3rem); color: #4CAF50; margin: 0; font-weight: bold; }
+        #adzan-overlay p { font-size: clamp(1.5rem, 4vh, 3rem); color: #4CAF50; margin: 0; font-weight: bold; transition: color 0.5s; }
 
         @media (max-width: 768px) {
             body { height: auto; overflow-y: auto; }
@@ -135,6 +134,7 @@
     <header class="glass-panel">
         <h1 id="masjid-name">MASJID AL-HIKMAH</h1>
         <div class="header-right">
+            <button id="tartil-btn" class="header-btn" onclick="toggleTartil()">🎵 Tartil</button>
             <button id="sound-btn" class="header-btn" onclick="aktifkanSuaraAdzan()">🔊 Aktifkan Otomatis</button>
         </div>
     </header>
@@ -186,9 +186,9 @@
     </div>
 
     <div id="adzan-overlay">
-        <h2>WAKTUNYA SHOLAT</h2>
+        <h2 id="adzan-title">WAKTUNYA SHOLAT</h2>
         <h1 id="adzan-prayer-name">SUBUH</h1>
-        <p>Silakan segera menuju Masjid</p>
+        <p id="adzan-subtitle">Silakan segera menuju Masjid</p>
     </div>
 
     <script>
@@ -203,16 +203,34 @@
         let adzanPlayed = { subuh: false, dzuhur: false, ashar: false, maghrib: false, isya: false };
         let warningPlayed = { subuh: false, dzuhur: false, ashar: false, maghrib: false, isya: false };
         let isSoundActive = false;
+        let iqomahDelay = 10; // Menit
+        let iqomahCountdownInterval = null;
+        let isTartilPlaying = false;
 
         const adzanSubuhAudio = new Audio('adzan-subuh.mp3');
         const adzanBiasaAudio = new Audio('adzan-biasa.mp3');
+        const tartilAudio = new Audio('tartil.mp3');
+        tartilAudio.loop = true; // Murattal berulang
         
         adzanSubuhAudio.onerror = () => console.log("File adzan-subuh.mp3 tidak ditemukan.");
         adzanBiasaAudio.onerror = () => console.log("File adzan-biasa.mp3 tidak ditemukan.");
+        tartilAudio.onerror = () => alert("File tartil.mp3 tidak ditemukan di GitHub!");
 
         function aktifkanSuaraAdzan() {
             isSoundActive = true;
             document.getElementById('sound-btn').style.display = 'none';
+        }
+
+        function toggleTartil() {
+            if (isTartilPlaying) {
+                tartilAudio.pause();
+                isTartilPlaying = false;
+                document.getElementById('tartil-btn').style.background = '#17a2b8';
+            } else {
+                tartilAudio.play().catch(e => alert("Gagal memutar Tartil. Pastikan file tartil.mp3 ada di GitHub."));
+                isTartilPlaying = true;
+                document.getElementById('tartil-btn').style.background = '#28a745';
+            }
         }
 
         function showWarningOverlay(namaSholat) {
@@ -224,11 +242,53 @@
         }
 
         function showAdzanOverlay(namaSholat) {
+            // Hentikan Tartil saat Adzan berkumandang
+            if (isTartilPlaying) {
+                tartilAudio.pause();
+                isTartilPlaying = false;
+                document.getElementById('tartil-btn').style.background = '#17a2b8';
+            }
+
             document.getElementById('adzan-prayer-name').innerText = namaSholat;
+            document.getElementById('adzan-title').innerText = "WAKTUNYA SHOLAT";
+            document.getElementById('adzan-subtitle').innerText = "Silakan segera menuju Masjid";
+            document.getElementById('adzan-subtitle').style.color = "#4CAF50";
             document.getElementById('adzan-overlay').style.display = 'flex';
+            
+            // Setelah Adzan selesai (2 menit), mulai hitung mundur Iqomah
             setTimeout(() => {
-                document.getElementById('adzan-overlay').style.display = 'none';
-            }, 120000);
+                startIqomahCountdown(namaSholat);
+            }, 120000); 
+        }
+
+        function startIqomahCountdown(namaSholat) {
+            document.getElementById('adzan-title').innerText = "IQOMAH " + namaSholat;
+            document.getElementById('adzan-prayer-name').innerText = ""; // Sembunyikan nama sholat besar
+            document.getElementById('adzan-subtitle').innerText = "10:00"; // Teks awal
+            document.getElementById('adzan-subtitle').style.color = "#ffc107"; // Warna kuning untuk angka
+            
+            let countdown = iqomahDelay * 60; // Ubah menit ke detik
+            
+            // Hentikan interval sebelumnya jika ada
+            if (iqomahCountdownInterval) clearInterval(iqomahCountdownInterval);
+            
+            iqomahCountdownInterval = setInterval(() => {
+                let m = Math.floor(countdown / 60);
+                let s = countdown % 60;
+                document.getElementById('adzan-subtitle').innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+                
+                if (countdown <= 0) {
+                    clearInterval(iqomahCountdownInterval);
+                    document.getElementById('adzan-subtitle').innerText = "IQOMAH"; // Saat hitungan habis
+                    document.getElementById('adzan-subtitle').style.color = "#ff0000"; // Warna merah
+                    
+                    // Sembunyikan overlay 1 menit setelah Iqomah selesai
+                    setTimeout(() => {
+                        document.getElementById('adzan-overlay').style.display = 'none';
+                    }, 60000); 
+                }
+                countdown--;
+            }, 1000);
         }
 
         dbRef.child('nama_masjid').on('value', s => document.getElementById('masjid-name').innerText = s.val() || "MASJID AL-HIKMAH");
@@ -246,7 +306,6 @@
         dbRef.child('imam_maghrib').on('value', s => document.getElementById('maghrib-imam').innerText = s.val() || "");
         dbRef.child('imam_isya').on('value', s => document.getElementById('isya-imam').innerText = s.val() || "");
         
-        // SLIDESHOW INFO
         let infoTexts = [];
         let currentInfo = 0;
         let infoIntervalMs = 10000;
@@ -266,7 +325,6 @@
                 return;
             }
             
-            // Efek Fade Out -> Ganti Teks -> Fade In
             el.style.opacity = 0;
             setTimeout(() => {
                 el.innerText = validInfos[currentInfo % validInfos.length];
@@ -276,6 +334,7 @@
 
         dbRef.child('kas_masjid').on('value', s => document.getElementById('kas-masjid').innerText = s.val() || "Rp 0");
         dbRef.child('running_text').on('value', s => document.getElementById('running-text').innerText = s.val() || "Selamat datang...");
+        dbRef.child('iqomah_delay').on('value', s => { iqomahDelay = parseInt(s.val()) || 10; });
         
         dbRef.child('title_info').on('value', s => document.getElementById('title-info').innerText = s.val() || "ℹ️ INFO & PENGUMUMAN");
         dbRef.child('title_kas').on('value', s => document.getElementById('title-kas').innerText = s.val() || "💰 KAS MASJID");
@@ -299,7 +358,6 @@
         dbRef.child('warna_bg_maghrib').on('value', s => document.getElementById('bg-maghrib').style.backgroundColor = s.val() || "transparent");
         dbRef.child('warna_bg_isya').on('value', s => document.getElementById('bg-isya').style.backgroundColor = s.val() || "transparent");
 
-        // SLIDESHOW WALLPAPER
         let bgImages = [];
         let currentBg = 0;
         let activeBgLayer = 1;
@@ -371,7 +429,6 @@
             document.getElementById('minute-hand').style.transform = `translateX(-50%) rotate(${minuteDeg}deg)`;
             document.getElementById('second-hand').style.transform = `translateX(-50%) rotate(${secondDeg}deg)`;
 
-            // Logika Wallpaper Slide
             if (Date.now() - lastSlideTime > slideIntervalMs) {
                 let validBgs = bgImages.filter(Boolean);
                 if (validBgs.length > 1) {
@@ -381,7 +438,6 @@
                 lastSlideTime = Date.now();
             }
 
-            // Logika Info Slide
             if (Date.now() - lastInfoTime > infoIntervalMs) {
                 let validInfos = infoTexts.filter(Boolean);
                 if (validInfos.length > 1) {
