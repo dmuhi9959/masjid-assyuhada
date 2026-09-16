@@ -36,7 +36,6 @@
             text-shadow: 3px 3px 6px #000, -2px -2px 6px #000, 0 0 15px #000; 
         }
 
-        /* Tombol Suara Adzan */
         #sound-btn {
             padding: 10px 20px; background: #ffc107; color: black; border: none;
             border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem;
@@ -51,7 +50,8 @@
         .left-panel {
             flex: 1; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; 
         }
-        .clock-container { position: relative; width: 25vh; height: 25vh; max-width: 220px; max-height: 220px; margin-bottom: 1vh; flex-shrink: 0; }
+        /* DIPERBAIKI: Jarak bawah diperbesar jadi 3vh agar tidak nutupin jam digital */
+        .clock-container { position: relative; width: 25vh; height: 25vh; max-width: 220px; max-height: 220px; margin-bottom: 3vh; flex-shrink: 0; }
         .digital-clock { 
             font-size: clamp(2rem, 6vh, 4.5rem); color: #ffffff; font-weight: bold; 
             text-shadow: 3px 3px 8px #000, -2px -2px 6px #000; line-height: 1;
@@ -88,7 +88,8 @@
         .running-text { display: inline-block; font-size: clamp(1rem, 2.5vh, 1.5rem); color: #fff; animation: scroll 25s linear infinite; text-shadow: 2px 2px 4px #000; }
         @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
         
-        .clock-face { width: 100%; height: 100%; border-radius: 50%; background: rgba(0,0,0,0.6); border: 8px solid #ffc107; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
+        /* DIPERBAIKI: Tambah overflow:hidden agar jarum/angka tidak keluar lingkaran */
+        .clock-face { width: 100%; height: 100%; border-radius: 50%; background: rgba(0,0,0,0.6); border: 8px solid #ffc107; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.8); overflow: hidden; }
         .clock-num { position: absolute; color: #ffffff; font-size: clamp(0.8rem, 2vh, 1.5rem); font-weight: bold; text-shadow: 1px 1px 3px #000; }
         .hand { position: absolute; top: 50%; left: 50%; transform-origin: bottom; background: #fff; border-radius: 10px; transform: translateX(-50%) rotate(0deg); z-index: 10; }
         .hour { width: 6px; height: 25%; margin-top: -25%; }
@@ -165,22 +166,19 @@
         firebase.initializeApp(firebaseConfig);
         const dbRef = firebase.database().ref('masjid');
 
-        // --- VARIABEL GLOBAL UNTUK WAKTU & ADZAN ---
         let prayerTimes = { subuh: "04:30", dzuhur: "12:00", ashar: "15:15", maghrib: "18:00", isya: "19:10" };
         let adzanPlayed = { subuh: false, dzuhur: false, ashar: false, maghrib: false, isya: false };
         let isSoundActive = false;
 
-        // Buat objek Audio
         const adzanSubuhAudio = new Audio('adzan-subuh.mp3');
         const adzanBiasaAudio = new Audio('adzan-biasa.mp3');
 
         function aktifkanSuaraAdzan() {
             isSoundActive = true;
-            document.getElementById('sound-btn').style.display = 'none'; // Sembunyikan tombol
+            document.getElementById('sound-btn').style.display = 'none';
             alert("Suara Adzan diaktifkan! Adzan akan berbunyi otomatis saat waktu sholat tiba.");
         }
 
-        // Update Waktu Sholat dari Firebase
         dbRef.child('nama_masjid').on('value', s => document.getElementById('masjid-name').innerText = s.val() || "MASJID AL-HIKMAH");
         dbRef.child('imsak').on('value', s => document.getElementById('imsak').innerText = s.val() || "--:--");
         dbRef.child('subuh').on('value', s => { let val = s.val() || "04:30"; document.getElementById('subuh').innerText = val; prayerTimes.subuh = val; });
@@ -203,12 +201,10 @@
             if(s.val()) document.body.style.backgroundImage = `url('${s.val()}')`;
         });
 
-        // --- JUDUL MENU ---
         dbRef.child('title_jadwal').on('value', s => document.getElementById('title-jadwal').innerText = s.val() || "JADWAL SHOLAT & IMAM");
         dbRef.child('title_info').on('value', s => document.getElementById('title-info').innerText = s.val() || "ℹ️ INFO & PENGUMUMAN");
         dbRef.child('title_kas').on('value', s => document.getElementById('title-kas').innerText = s.val() || "💰 KAS MASJID");
 
-        // --- PENGATURAN WARNA ---
         dbRef.child('warna_judul').on('value', s => document.getElementById('masjid-name').style.color = s.val() || "#ffc107");
         dbRef.child('warna_jam').on('value', s => document.getElementById('digital-time').style.color = s.val() || "#ffffff");
         dbRef.child('warna_tanggal').on('value', s => document.getElementById('date-info').style.color = s.val() || "#ffc107");
@@ -221,7 +217,6 @@
         dbRef.child('warna_title_kas').on('value', s => document.getElementById('title-kas').style.color = s.val() || "#ffc107");
         dbRef.child('warna_running_text').on('value', s => document.getElementById('running-text').style.color = s.val() || "#ffffff");
 
-        // --- BIKIN ANGKA JAM 1-12 OTOMATIS ---
         const clockFace = document.getElementById('clock-face');
         for(let i = 1; i <= 12; i++) {
             const num = document.createElement('div');
@@ -236,7 +231,6 @@
             clockFace.appendChild(num);
         }
 
-        // --- SISTEM JAM & CEK ADZAN REAL-TIME ---
         function updateClock() {
             const now = new Date();
             const hours = now.getHours();
@@ -262,10 +256,8 @@
             document.getElementById('minute-hand').style.transform = `translateX(-50%) rotate(${minuteDeg}deg)`;
             document.getElementById('second-hand').style.transform = `translateX(-50%) rotate(${secondDeg}deg)`;
 
-            // --- LOGIKA ADZAN OTOMATIS ---
             let currentTimeStr = String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0');
 
-            // Reset jam 00:00 (tengah malam)
             if (currentTimeStr === "00:00") {
                 adzanPlayed = { subuh: false, dzuhur: false, ashar: false, maghrib: false, isya: false };
             }
