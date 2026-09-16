@@ -11,9 +11,9 @@
             margin: 0; padding: 0; color: #fff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: grid; 
-            grid-template-rows: auto 1fr auto; /* Header, Konten, Footer */
+            grid-template-rows: auto 1fr auto;
             height: 100vh; 
-            overflow: hidden; /* Dilarang scroll di TV/Laptop */
+            overflow: hidden; 
             background: url('https://images.unsplash.com/photo-1542816417-0983c9c9ad53?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed; 
             background-size: cover;
         }
@@ -28,12 +28,19 @@
 
         header {
             padding: 1.5vh 3vw; text-align: left; 
+            display: flex; justify-content: space-between; align-items: center;
         }
         header h1 { 
             margin: 0; color: #ffc107; 
-            /* Font pakai vh biar kecil di laptop, besar di TV */
             font-size: clamp(1.5rem, 4vh, 3rem); 
             text-shadow: 3px 3px 6px #000, -2px -2px 6px #000, 0 0 15px #000; 
+        }
+
+        /* Tombol Suara Adzan */
+        #sound-btn {
+            padding: 10px 20px; background: #ffc107; color: black; border: none;
+            border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
 
         .main-content {
@@ -81,7 +88,6 @@
         .running-text { display: inline-block; font-size: clamp(1rem, 2.5vh, 1.5rem); color: #fff; animation: scroll 25s linear infinite; text-shadow: 2px 2px 4px #000; }
         @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
         
-        /* Analog Clock CSS */
         .clock-face { width: 100%; height: 100%; border-radius: 50%; background: rgba(0,0,0,0.6); border: 8px solid #ffc107; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
         .clock-num { position: absolute; color: #ffffff; font-size: clamp(0.8rem, 2vh, 1.5rem); font-weight: bold; text-shadow: 1px 1px 3px #000; }
         .hand { position: absolute; top: 50%; left: 50%; transform-origin: bottom; background: #fff; border-radius: 10px; transform: translateX(-50%) rotate(0deg); z-index: 10; }
@@ -90,14 +96,11 @@
         .second { width: 2px; height: 45%; margin-top: -45%; background: red; }
         .center-dot { position: absolute; top: 50%; left: 50%; width: 12px; height: 12px; background: #ffc107; border-radius: 50%; transform: translate(-50%, -50%); z-index: 11; }
 
-        /* RESPONSIVE UNTUK HP (Tampilan Tegak) */
         @media (max-width: 768px) {
             body { height: auto; overflow-y: auto; display: flex; flex-direction: column; }
             .main-content { flex-direction: column; padding: 0 20px 20px 20px; }
-            header { padding: 20px; text-align: center; }
+            header { flex-direction: column; gap: 10px; }
             .left-panel { align-items: center; }
-            .clock-container { width: 180px; height: 180px; }
-            .digital-clock { font-size: 3.5rem; }
             .right-panel { text-align: center; }
             .info-box { text-align: center; }
         }
@@ -107,6 +110,7 @@
 
     <header class="glass-panel">
         <h1 id="masjid-name">MASJID AL-HIKMAH</h1>
+        <button id="sound-btn" onclick="aktifkanSuaraAdzan()">🔊 Aktifkan Suara Adzan</button>
     </header>
 
     <div class="main-content">
@@ -161,15 +165,30 @@
         firebase.initializeApp(firebaseConfig);
         const dbRef = firebase.database().ref('masjid');
 
-        // Teks & Jam
+        // --- VARIABEL GLOBAL UNTUK WAKTU & ADZAN ---
+        let prayerTimes = { subuh: "04:30", dzuhur: "12:00", ashar: "15:15", maghrib: "18:00", isya: "19:10" };
+        let adzanPlayed = { subuh: false, dzuhur: false, ashar: false, maghrib: false, isya: false };
+        let isSoundActive = false;
+
+        // Buat objek Audio
+        const adzanSubuhAudio = new Audio('adzan-subuh.mp3');
+        const adzanBiasaAudio = new Audio('adzan-biasa.mp3');
+
+        function aktifkanSuaraAdzan() {
+            isSoundActive = true;
+            document.getElementById('sound-btn').style.display = 'none'; // Sembunyikan tombol
+            alert("Suara Adzan diaktifkan! Adzan akan berbunyi otomatis saat waktu sholat tiba.");
+        }
+
+        // Update Waktu Sholat dari Firebase
         dbRef.child('nama_masjid').on('value', s => document.getElementById('masjid-name').innerText = s.val() || "MASJID AL-HIKMAH");
         dbRef.child('imsak').on('value', s => document.getElementById('imsak').innerText = s.val() || "--:--");
-        dbRef.child('subuh').on('value', s => document.getElementById('subuh').innerText = s.val() || "04:30");
+        dbRef.child('subuh').on('value', s => { let val = s.val() || "04:30"; document.getElementById('subuh').innerText = val; prayerTimes.subuh = val; });
         dbRef.child('syuruk').on('value', s => document.getElementById('syuruk').innerText = s.val() || "--:--");
-        dbRef.child('dzuhur').on('value', s => document.getElementById('dzuhur').innerText = s.val() || "12:00");
-        dbRef.child('ashar').on('value', s => document.getElementById('ashar').innerText = s.val() || "15:15");
-        dbRef.child('maghrib').on('value', s => document.getElementById('maghrib').innerText = s.val() || "18:00");
-        dbRef.child('isya').on('value', s => document.getElementById('isya').innerText = s.val() || "19:10");
+        dbRef.child('dzuhur').on('value', s => { let val = s.val() || "12:00"; document.getElementById('dzuhur').innerText = val; prayerTimes.dzuhur = val; });
+        dbRef.child('ashar').on('value', s => { let val = s.val() || "15:15"; document.getElementById('ashar').innerText = val; prayerTimes.ashar = val; });
+        dbRef.child('maghrib').on('value', s => { let val = s.val() || "18:00"; document.getElementById('maghrib').innerText = val; prayerTimes.maghrib = val; });
+        dbRef.child('isya').on('value', s => { let val = s.val() || "19:10"; document.getElementById('isya').innerText = val; prayerTimes.isya = val; });
         
         dbRef.child('imam_subuh').on('value', s => document.getElementById('subuh-imam').innerText = s.val() || "");
         dbRef.child('imam_dzuhur').on('value', s => document.getElementById('dzuhur-imam').innerText = s.val() || "");
@@ -193,22 +212,10 @@
         dbRef.child('warna_judul').on('value', s => document.getElementById('masjid-name').style.color = s.val() || "#ffc107");
         dbRef.child('warna_jam').on('value', s => document.getElementById('digital-time').style.color = s.val() || "#ffffff");
         dbRef.child('warna_tanggal').on('value', s => document.getElementById('date-info').style.color = s.val() || "#ffc107");
-        dbRef.child('warna_jadwal').on('value', s => {
-            let val = s.val() || "#ffffff";
-            document.querySelectorAll('.nama-sholat').forEach(el => el.style.color = val);
-        });
-        dbRef.child('warna_waktu').on('value', s => {
-            let val = s.val() || "#00ff00";
-            document.querySelectorAll('.time').forEach(el => el.style.color = val);
-        });
-        dbRef.child('warna_imam').on('value', s => {
-            let val = s.val() || "#00e5ff";
-            document.querySelectorAll('.imam-name').forEach(el => el.style.color = val);
-        });
-        dbRef.child('warna_info').on('value', s => {
-            let val = s.val() || "#ffffff";
-            document.querySelectorAll('.info-list').forEach(el => el.style.color = val);
-        });
+        dbRef.child('warna_jadwal').on('value', s => { let val = s.val() || "#ffffff"; document.querySelectorAll('.nama-sholat').forEach(el => el.style.color = val); });
+        dbRef.child('warna_waktu').on('value', s => { let val = s.val() || "#00ff00"; document.querySelectorAll('.time').forEach(el => el.style.color = val); });
+        dbRef.child('warna_imam').on('value', s => { let val = s.val() || "#00e5ff"; document.querySelectorAll('.imam-name').forEach(el => el.style.color = val); });
+        dbRef.child('warna_info').on('value', s => { let val = s.val() || "#ffffff"; document.querySelectorAll('.info-list').forEach(el => el.style.color = val); });
         dbRef.child('warna_title_jadwal').on('value', s => document.getElementById('title-jadwal').style.color = s.val() || "#ffc107");
         dbRef.child('warna_title_info').on('value', s => document.getElementById('title-info').style.color = s.val() || "#ffc107");
         dbRef.child('warna_title_kas').on('value', s => document.getElementById('title-kas').style.color = s.val() || "#ffc107");
@@ -229,14 +236,16 @@
             clockFace.appendChild(num);
         }
 
-        // --- SISTEM JAM REAL-TIME ---
+        // --- SISTEM JAM & CEK ADZAN REAL-TIME ---
         function updateClock() {
             const now = new Date();
             const hours = now.getHours();
             const minutes = now.getMinutes();
             const seconds = now.getSeconds();
+            
             document.getElementById('digital-time').innerText = 
                 String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
+                
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             const masehi = now.toLocaleDateString('id-ID', options);
             try {
@@ -245,12 +254,35 @@
             } catch (e) {
                 document.getElementById('date-info').innerText = masehi;
             }
+
             const hourDeg = (hours % 12) * 30 + minutes * 0.5;
             const minuteDeg = minutes * 6 + seconds * 0.1;
             const secondDeg = seconds * 6;
             document.getElementById('hour-hand').style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
             document.getElementById('minute-hand').style.transform = `translateX(-50%) rotate(${minuteDeg}deg)`;
             document.getElementById('second-hand').style.transform = `translateX(-50%) rotate(${secondDeg}deg)`;
+
+            // --- LOGIKA ADZAN OTOMATIS ---
+            let currentTimeStr = String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0');
+
+            // Reset jam 00:00 (tengah malam)
+            if (currentTimeStr === "00:00") {
+                adzanPlayed = { subuh: false, dzuhur: false, ashar: false, maghrib: false, isya: false };
+            }
+
+            if (isSoundActive) {
+                if (currentTimeStr === prayerTimes.subuh && !adzanPlayed.subuh) {
+                    adzanSubuhAudio.play(); adzanPlayed.subuh = true;
+                } else if (currentTimeStr === prayerTimes.dzuhur && !adzanPlayed.dzuhur) {
+                    adzanBiasaAudio.play(); adzanPlayed.dzuhur = true;
+                } else if (currentTimeStr === prayerTimes.ashar && !adzanPlayed.ashar) {
+                    adzanBiasaAudio.play(); adzanPlayed.ashar = true;
+                } else if (currentTimeStr === prayerTimes.maghrib && !adzanPlayed.maghrib) {
+                    adzanBiasaAudio.play(); adzanPlayed.maghrib = true;
+                } else if (currentTimeStr === prayerTimes.isya && !adzanPlayed.isya) {
+                    adzanBiasaAudio.play(); adzanPlayed.isya = true;
+                }
+            }
         }
         setInterval(updateClock, 1000);
         updateClock();
