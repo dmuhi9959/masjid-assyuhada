@@ -33,10 +33,20 @@
         <label>Nama Masjid</label>
         <input type="text" id="nama_masjid" placeholder="Masjid Al-Hikmah">
     </div>
+
     <div class="form-group">
-        <label>Link Foto Wallpaper</label>
-        <input type="url" id="background_url" placeholder="https://example.com/foto-masjid.jpg">
+        <label>Link Wallpaper 1</label>
+        <input type="url" id="background_url_1" placeholder="https://example.com/foto1.jpg">
     </div>
+    <div class="form-group">
+        <label>Link Wallpaper 2</label>
+        <input type="url" id="background_url_2" placeholder="https://example.com/foto2.jpg">
+    </div>
+    <div class="form-group">
+        <label>Link Wallpaper 3</label>
+        <input type="url" id="background_url_3" placeholder="https://example.com/foto3.jpg">
+    </div>
+
     <div class="form-group">
         <label>Teks Berjalan (Running Text)</label>
         <textarea id="running_text" placeholder="Selamat datang di masjid..."></textarea>
@@ -79,7 +89,6 @@
 
     <hr>
 
-    <!-- TAMBAHAN BARU: WARNA TEMA SHOLAT -->
     <h2>🌅 WARNA TEMA WAKTU SHOLAT</h2>
     <div class="color-grid">
         <div class="color-item"><label>Tema Imsak</label><input type="color" id="warna_bg_imsak" value="#444444"></div>
@@ -145,7 +154,9 @@
         const data = snapshot.val();
         if(data) {
             document.getElementById('nama_masjid').value = data.nama_masjid || '';
-            document.getElementById('background_url').value = data.background_url || '';
+            document.getElementById('background_url_1').value = data.background_url_1 || '';
+            document.getElementById('background_url_2').value = data.background_url_2 || '';
+            document.getElementById('background_url_3').value = data.background_url_3 || '';
             document.getElementById('running_text').value = data.running_text || '';
             
             document.getElementById('title_jadwal').value = data.title_jadwal || '';
@@ -193,7 +204,9 @@
     function simpanUtama() {
         dbRef.update({
             nama_masjid: document.getElementById('nama_masjid').value,
-            background_url: document.getElementById('background_url').value,
+            background_url_1: document.getElementById('background_url_1').value,
+            background_url_2: document.getElementById('background_url_2').value,
+            background_url_3: document.getElementById('background_url_3').value,
             running_text: document.getElementById('running_text').value,
             title_jadwal: document.getElementById('title_jadwal').value,
             title_info: document.getElementById('title_info').value,
@@ -225,7 +238,6 @@
         });
     }
 
-    // FUNGSI BARU UNTUK TEMA SHOLAT
     function simpanWarnaSholat() {
         dbRef.update({
             warna_bg_imsak: document.getElementById('warna_bg_imsak').value,
