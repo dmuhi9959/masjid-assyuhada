@@ -3,444 +3,308 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Info Masjid Digital</title>
+    <title>Panel Kontrol Masjid</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        body {
-            margin: 0; padding: 0; color: #fff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex; 
-            flex-direction: column; 
-            height: 100vh; 
-            overflow: hidden; 
-            background-color: #000;
-        }
-
-        .bg-layer {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background-size: cover; background-position: center; z-index: -1;
-            opacity: 0; transition: opacity 2s ease-in-out;
-        }
-
-        .glass-panel {
-            background: transparent !important;
-            backdrop-filter: none !important;
-            -webkit-backdrop-filter: none !important;
-            border: none !important;
-            box-shadow: none !important;
-        }
-
-        header {
-            padding: 1.5vh 3vw; text-align: left; 
-            display: flex; justify-content: space-between; align-items: center;
-            flex-shrink: 0;
-        }
-        header h1 { 
-            margin: 0; color: #ffc107; 
-            font-size: clamp(1.5rem, 4vh, 3rem); 
-            text-shadow: 3px 3px 6px #000, -2px -2px 6px #000, 0 0 15px #000; 
-        }
-
-        .header-right { display: flex; gap: 10px; }
-        .header-btn {
-            padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; 
-            font-weight: bold; font-size: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-        }
-        #sound-btn { background: #ffc107; color: black; }
-
-        /* DIPERBAIKI: Pakai Flex 1 agar memaksa turun ke bawah */
-        .main-content {
-            flex: 1; 
-            display: flex; padding: 0 3vw; gap: 3vw; min-height: 0; 
-        }
-        
-        .left-panel { flex: 1; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
-        .clock-container { position: relative; width: 25vh; height: 25vh; max-width: 220px; max-height: 220px; margin-bottom: 3vh; flex-shrink: 0; }
-        .digital-clock { font-size: clamp(2rem, 6vh, 4.5rem); color: #ffffff; font-weight: bold; text-shadow: 3px 3px 8px #000, -2px -2px 6px #000; line-height: 1; }
-        .date-info { font-size: clamp(1rem, 2.5vh, 1.5rem); color: #ffc107; margin-top: 1vh; text-shadow: 2px 2px 6px #000; }
-        
-        .right-panel { flex: 1.2; display: flex; flex-direction: column; gap: 2vh; justify-content: center; text-align: right; overflow: hidden; }
-        .info-box { padding: 1.5vh 0; border-top: 2px solid rgba(255,255,255,0.5); }
-        .info-box h3 { margin: 0 0 1vh 0; color: #ffc107; font-size: clamp(1rem, 2.2vh, 1.4rem); text-shadow: 2px 2px 6px #000; }
-        .info-list { font-size: clamp(0.9rem, 2vh, 1.3rem); line-height: 1.5; color: #ffffff; font-weight: bold; text-shadow: 2px 2px 6px #000; transition: opacity 0.5s ease-in-out; } /* Efek fade untuk slide info */
-        .kas-amount { color: #00ff00; font-weight: bold; font-size: clamp(1rem, 2.8vh, 1.6rem); margin-top: 0.5vh; text-shadow: 2px 2px 6px #000; }
-
-        /* DIPERBAIKI: flex-shrink 0 agar tidak tertekan ke atas */
-        .bottom-schedule { 
-            flex-shrink: 0;
-            margin: 0 3vw; padding: 1vh 1vw; display: flex; justify-content: space-between; align-items: stretch; gap: 5px; 
-        }
-        .prayer-item { 
-            flex: 1; text-align: center; display: flex; flex-direction: column; justify-content: center;
-            border-right: 1px solid rgba(255,255,255,0.2); padding: 1vh 5px; border-radius: 8px; transition: background-color 0.5s; 
-        }
-        .prayer-item:last-child { border-right: none; }
-        .p-name { font-size: clamp(0.9rem, 1.8vh, 1.3rem); color: #ffffff; font-weight: bold; text-shadow: 2px 2px 4px #000; margin-bottom: 5px; }
-        .p-time { font-size: clamp(1.1rem, 2.5vh, 1.8rem); color: #00ff00; font-weight: bold; text-shadow: 2px 2px 6px #000; }
-        .p-imam { font-size: clamp(0.7rem, 1.5vh, 1rem); color: #00e5ff; text-shadow: 1px 1px 3px #000; margin-top: 5px; min-height: 1.5vh; }
-
-        footer { 
-            flex-shrink: 0;
-            background: rgba(0, 0, 0, 0.8); margin: 1.5vh 3vw; padding: 1.5vh 0; border-radius: 15px;
-            overflow: hidden; white-space: nowrap; 
-        }
-        .running-text { display: inline-block; font-size: clamp(1rem, 2.5vh, 1.5rem); color: #fff; animation: scroll 25s linear infinite; text-shadow: 2px 2px 4px #000; }
-        @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-        
-        .clock-face { width: 100%; height: 100%; border-radius: 50%; background: rgba(0,0,0,0.6); border: 8px solid #ffc107; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.8); overflow: hidden; }
-        .clock-num { position: absolute; color: #ffffff; font-size: clamp(0.8rem, 2vh, 1.5rem); font-weight: bold; text-shadow: 1px 1px 3px #000; }
-        .hand { position: absolute; top: 50%; left: 50%; transform-origin: bottom; background: #fff; border-radius: 10px; transform: translateX(-50%) rotate(0deg); z-index: 10; }
-        .hour { width: 6px; height: 25%; margin-top: -25%; }
-        .minute { width: 4px; height: 40%; margin-top: -40%; background: #00ff00; }
-        .second { width: 2px; height: 45%; margin-top: -45%; background: red; }
-        .center-dot { position: absolute; top: 50%; left: 50%; width: 12px; height: 12px; background: #ffc107; border-radius: 50%; transform: translate(-50%, -50%); z-index: 11; }
-
-        #warning-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.95); z-index: 9998;
-            display: none; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center;
-        }
-        #warning-overlay h2 { font-size: clamp(1.5rem, 5vh, 3rem); color: #ffc107; margin: 0; letter-spacing: 2px; }
-        #warning-overlay h1 { font-size: clamp(2.5rem, 10vh, 6rem); color: #ffffff; margin: 20px 0; text-shadow: 0 0 20px #ffc107; text-transform: uppercase; }
-        #warning-overlay p { font-size: clamp(1rem, 3vh, 2rem); color: #ccc; margin: 0; }
-
-        #adzan-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.98); z-index: 9999;
-            display: none; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center;
-        }
-        #adzan-overlay h2 { font-size: clamp(2rem, 8vh, 5rem); color: #ccc; margin: 0; letter-spacing: 3px; }
-        #adzan-overlay h1 { font-size: clamp(3rem, 12vh, 8rem); color: #ffc107; margin: 20px 0; text-shadow: 0 0 20px #ffc107; text-transform: uppercase; }
-        #adzan-overlay p { font-size: clamp(1.5rem, 4vh, 3rem); color: #4CAF50; margin: 0; font-weight: bold; }
-
-        @media (max-width: 768px) {
-            body { height: auto; overflow-y: auto; }
-            .main-content { flex-direction: column; padding: 0 20px; }
-            header { flex-direction: column; gap: 10px; }
-            .left-panel { align-items: center; }
-            .right-panel { text-align: center; }
-            .bottom-schedule { flex-wrap: wrap; justify-content: center; gap: 10px; }
-            .prayer-item { flex: 1 1 40%; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; }
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 500px; margin: auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #0a0a2a; margin-top: 0; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; color: #555; }
+        input[type="text"], textarea, input[type="url"], input[type="number"] { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        textarea { resize: vertical; min-height: 80px; }
+        button { width: 100%; padding: 15px; background: #ffc107; color: black; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #e0a800; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .status { text-align: center; margin-top: 15px; font-weight: bold; color: #28a745; display: none; }
+        hr { border: 0; border-top: 1px solid #eee; margin: 25px 0; }
+        .color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .color-item { display: flex; flex-direction: column; }
+        input[type="color"] { width: 100%; height: 45px; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; padding: 2px; background: #fff; }
     </style>
 </head>
 <body>
 
-    <div id="bg1" class="bg-layer"></div>
-    <div id="bg2" class="bg-layer"></div>
-
-    <header class="glass-panel">
-        <h1 id="masjid-name">MASJID AL-HIKMAH</h1>
-        <div class="header-right">
-            <button id="sound-btn" class="header-btn" onclick="aktifkanSuaraAdzan()">🔊 Aktifkan Otomatis</button>
-        </div>
-    </header>
-
-    <div class="main-content">
-        <div class="left-panel glass-panel">
-            <div class="clock-container">
-                <div class="clock-face" id="clock-face">
-                    <div class="hand hour" id="hour-hand"></div>
-                    <div class="hand minute" id="minute-hand"></div>
-                    <div class="hand second" id="second-hand"></div>
-                    <div class="center-dot"></div>
-                </div>
-            </div>
-            <div class="digital-clock" id="digital-time">00:00:00</div>
-            <div class="date-info" id="date-info">Hari, Tanggal</div>
-        </div>
-
-        <div class="right-panel glass-panel">
-            <div class="info-box">
-                <h3 id="title-info">ℹ️ INFO & PENGUMUMAN</h3>
-                <div class="info-list" id="info-text">Memuat info...</div>
-            </div>
-            <div class="info-box">
-                <h3 id="title-kas">💰 KAS MASJID</h3>
-                <div class="kas-amount" id="kas-masjid">Rp 0</div>
-            </div>
-        </div>
+<div class="container">
+    <h2>⚙️ PANEL KONTROL INFO MASJID</h2>
+    
+    <div class="form-group">
+        <label>Nama Masjid</label>
+        <input type="text" id="nama_masjid" placeholder="Masjid Al-Hikmah">
     </div>
 
-    <div class="bottom-schedule">
-        <div class="prayer-item" id="bg-imsak"><span class="p-name">Imsak</span><span class="p-time" id="imsak">--:--</span><span class="p-imam"></span></div>
-        <div class="prayer-item" id="bg-subuh"><span class="p-name">Subuh</span><span class="p-time" id="subuh">04:30</span><span class="p-imam" id="subuh-imam"></span></div>
-        <div class="prayer-item" id="bg-syuruk"><span class="p-name">Syuruk</span><span class="p-time" id="syuruk">--:--</span><span class="p-imam"></span></div>
-        <div class="prayer-item" id="bg-dzuhur"><span class="p-name">Dzuhur</span><span class="p-time" id="dzuhur">12:00</span><span class="p-imam" id="dzuhur-imam"></span></div>
-        <div class="prayer-item" id="bg-ashar"><span class="p-name">Ashar</span><span class="p-time" id="ashar">15:15</span><span class="p-imam" id="ashar-imam"></span></div>
-        <div class="prayer-item" id="bg-maghrib"><span class="p-name">Maghrib</span><span class="p-time" id="maghrib">18:00</span><span class="p-imam" id="maghrib-imam"></span></div>
-        <div class="prayer-item" id="bg-isya"><span class="p-name">Isya</span><span class="p-time" id="isya">19:10</span><span class="p-imam" id="isya-imam"></span></div>
+    <div class="form-group">
+        <label>Link Wallpaper 1</label>
+        <input type="url" id="background_url_1" placeholder="https://example.com/foto1.jpg">
+    </div>
+    <div class="form-group">
+        <label>Link Wallpaper 2</label>
+        <input type="url" id="background_url_2" placeholder="https://example.com/foto2.jpg">
+    </div>
+    <div class="form-group">
+        <label>Link Wallpaper 3</label>
+        <input type="url" id="background_url_3" placeholder="https://example.com/foto3.jpg">
+    </div>
+    
+    <div class="form-group">
+        <label>Kecepatan Slide Wallpaper (Detik)</label>
+        <input type="number" id="slide_interval" placeholder="10" min="3" max="120">
     </div>
 
-    <footer class="glass-panel">
-        <div class="running-text" id="running-text">Selamat datang di Masjid Al-Hikmah. Mohon matikan HP sebelum memasuki area masjid. Jangan lupa berwudhu.</div>
-    </footer>
-
-    <div id="warning-overlay">
-        <h2>2 MENIT LAGI MASUK WAKTU ADZAN</h2>
-        <h1 id="warning-prayer-name">SUBUH</h1>
-        <p>Mohon siap-siap menuju Masjid</p>
+    <div class="form-group">
+        <label>Teks Berjalan (Running Text)</label>
+        <textarea id="running_text" placeholder="Selamat datang di masjid..."></textarea>
+    </div>
+    <div class="form-group">
+        <label>Judul Jadwal</label>
+        <input type="text" id="title_jadwal" placeholder="JADWAL SHOLAT & IMAM">
+    </div>
+    <div class="form-group">
+        <label>Judul Info</label>
+        <input type="text" id="title_info" placeholder="ℹ️ INFO & PENGUMUMAN">
+    </div>
+    <div class="form-group">
+        <label>Judul Kas</label>
+        <input type="text" id="title_kas" placeholder="💰 KAS MASJID">
     </div>
 
-    <div id="adzan-overlay">
-        <h2>WAKTUNYA SHOLAT</h2>
-        <h1 id="adzan-prayer-name">SUBUH</h1>
-        <p>Silakan segera menuju Masjid</p>
+    <button onclick="simpanUtama()">SIMPAN PERUBAHAN</button>
+    <div class="status" id="status-utama">✅ Berhasil disimpan!</div>
+
+    <hr>
+
+    <h2>🎨 PENGATURAN WARNA TEKS</h2>
+    <div class="color-grid">
+        <div class="color-item"><label>Judul Masjid</label><input type="color" id="warna_judul" value="#ffc107"></div>
+        <div class="color-item"><label>Jam Digital</label><input type="color" id="warna_jam" value="#ffffff"></div>
+        <div class="color-item"><label>Tanggal</label><input type="color" id="warna_tanggal" value="#ffc107"></div>
+        <div class="color-item"><label>Nama Sholat</label><input type="color" id="warna_jadwal" value="#ffffff"></div>
+        <div class="color-item"><label>Waktu Sholat</label><input type="color" id="warna_waktu" value="#00ff00"></div>
+        <div class="color-item"><label>Nama Imam</label><input type="color" id="warna_imam" value="#00e5ff"></div>
+        <div class="color-item"><label>Info & Pengumuman</label><input type="color" id="warna_info" value="#ffffff"></div>
+        <div class="color-item"><label>Judul Jadwal</label><input type="color" id="warna_title_jadwal" value="#ffc107"></div>
+        <div class="color-item"><label>Judul Info</label><input type="color" id="warna_title_info" value="#ffc107"></div>
+        <div class="color-item"><label>Judul Kas</label><input type="color" id="warna_title_kas" value="#ffc107"></div>
+        <div class="color-item"><label>Teks Berjalan</label><input type="color" id="warna_running_text" value="#ffffff"></div>
     </div>
 
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyC4CQMl5l1n1voweOgQouMD1kJcpHs-esU",
-            databaseURL: "https://gps-tracher-default-rtdb.firebaseio.com"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const dbRef = firebase.database().ref('masjid');
+    <button onclick="simpanWarna()" style="background: #007bff; color: white; margin-top: 20px;">SIMPAN WARNA TEKS</button>
+    <div class="status" id="status-warna">✅ Warna disimpan!</div>
 
-        let prayerTimes = { subuh: "04:30", dzuhur: "12:00", ashar: "15:15", maghrib: "18:00", isya: "19:10" };
-        let adzanPlayed = { subuh: false, dzuhur: false, ashar: false, maghrib: false, isya: false };
-        let warningPlayed = { subuh: false, dzuhur: false, ashar: false, maghrib: false, isya: false };
-        let isSoundActive = false;
+    <hr>
 
-        const adzanSubuhAudio = new Audio('adzan-subuh.mp3');
-        const adzanBiasaAudio = new Audio('adzan-biasa.mp3');
+    <h2>🌅 WARNA TEMA WAKTU SHOLAT</h2>
+    <div class="color-grid">
+        <div class="color-item"><label>Tema Imsak</label><input type="color" id="warna_bg_imsak" value="#444444"></div>
+        <div class="color-item"><label>Tema Subuh</label><input type="color" id="warna_bg_subuh" value="#856404"></div>
+        <div class="color-item"><label>Tema Syuruk</label><input type="color" id="warna_bg_syuruk" value="#444444"></div>
+        <div class="color-item"><label>Tema Dzuhur</label><input type="color" id="warna_bg_dzuhur" value="#bd2130"></div>
+        <div class="color-item"><label>Tema Ashar</label><input type="color" id="warna_bg_ashar" value="#117a8b"></div>
+        <div class="color-item"><label>Tema Maghrib</label><input type="color" id="warna_bg_maghrib" value="#b35900"></div>
+        <div class="color-item"><label>Tema Isya</label><input type="color" id="warna_bg_isya" value="#5a32a3"></div>
+    </div>
+
+    <button onclick="simpanWarnaSholat()" style="background: #17a2b8; color: white; margin-top: 20px;">SIMPAN TEMA SHOLAT</button>
+    <div class="status" id="status-warna-sholat">✅ Tema Sholat disimpan!</div>
+
+    <hr>
+
+    <h2>🕌 JADWAL SHOLAT & IMAM</h2>
+    <div class="grid-2">
+        <div class="form-group"><label>Imsak</label><input type="text" id="imsak" placeholder="04:20"></div>
+        <div class="form-group"></div>
         
-        adzanSubuhAudio.onerror = () => console.log("File adzan-subuh.mp3 tidak ditemukan.");
-        adzanBiasaAudio.onerror = () => console.log("File adzan-biasa.mp3 tidak ditemukan.");
+        <div class="form-group"><label>Subuh</label><input type="text" id="subuh" placeholder="04:30"></div>
+        <div class="form-group"><label>Imam Subuh</label><input type="text" id="imam_subuh" placeholder="Ustadz..."></div>
 
-        function aktifkanSuaraAdzan() {
-            isSoundActive = true;
-            document.getElementById('sound-btn').style.display = 'none';
-        }
+        <div class="form-group"><label>Syuruk</label><input type="text" id="syuruk" placeholder="05:45"></div>
+        <div class="form-group"></div>
 
-        function showWarningOverlay(namaSholat) {
-            document.getElementById('warning-prayer-name').innerText = namaSholat;
-            document.getElementById('warning-overlay').style.display = 'flex';
-            setTimeout(() => {
-                document.getElementById('warning-overlay').style.display = 'none';
-            }, 15000);
-        }
+        <div class="form-group"><label>Dzuhur</label><input type="text" id="dzuhur" placeholder="12:00"></div>
+        <div class="form-group"><label>Imam Dzuhur</label><input type="text" id="imam_dzuhur" placeholder="Ustadz..."></div>
 
-        function showAdzanOverlay(namaSholat) {
-            document.getElementById('adzan-prayer-name').innerText = namaSholat;
-            document.getElementById('adzan-overlay').style.display = 'flex';
-            setTimeout(() => {
-                document.getElementById('adzan-overlay').style.display = 'none';
-            }, 120000);
-        }
+        <div class="form-group"><label>Ashar</label><input type="text" id="ashar" placeholder="15:15"></div>
+        <div class="form-group"><label>Imam Ashar</label><input type="text" id="imam_ashar" placeholder="Ustadz..."></div>
 
-        dbRef.child('nama_masjid').on('value', s => document.getElementById('masjid-name').innerText = s.val() || "MASJID AL-HIKMAH");
-        dbRef.child('imsak').on('value', s => document.getElementById('imsak').innerText = s.val() || "--:--");
-        dbRef.child('subuh').on('value', s => { let val = s.val() || "04:30"; document.getElementById('subuh').innerText = val; prayerTimes.subuh = val; });
-        dbRef.child('syuruk').on('value', s => document.getElementById('syuruk').innerText = s.val() || "--:--");
-        dbRef.child('dzuhur').on('value', s => { let val = s.val() || "12:00"; document.getElementById('dzuhur').innerText = val; prayerTimes.dzuhur = val; });
-        dbRef.child('ashar').on('value', s => { let val = s.val() || "15:15"; document.getElementById('ashar').innerText = val; prayerTimes.ashar = val; });
-        dbRef.child('maghrib').on('value', s => { let val = s.val() || "18:00"; document.getElementById('maghrib').innerText = val; prayerTimes.maghrib = val; });
-        dbRef.child('isya').on('value', s => { let val = s.val() || "19:10"; document.getElementById('isya').innerText = val; prayerTimes.isya = val; });
-        
-        dbRef.child('imam_subuh').on('value', s => document.getElementById('subuh-imam').innerText = s.val() || "");
-        dbRef.child('imam_dzuhur').on('value', s => document.getElementById('dzuhur-imam').innerText = s.val() || "");
-        dbRef.child('imam_ashar').on('value', s => document.getElementById('ashar-imam').innerText = s.val() || "");
-        dbRef.child('imam_maghrib').on('value', s => document.getElementById('maghrib-imam').innerText = s.val() || "");
-        dbRef.child('imam_isya').on('value', s => document.getElementById('isya-imam').innerText = s.val() || "");
-        
-        // SLIDESHOW INFO
-        let infoTexts = [];
-        let currentInfo = 0;
-        let infoIntervalMs = 10000;
-        let lastInfoTime = Date.now();
+        <div class="form-group"><label>Maghrib</label><input type="text" id="maghrib" placeholder="18:00"></div>
+        <div class="form-group"><label>Imam Maghrib</label><input type="text" id="imam_maghrib" placeholder="Ustadz..."></div>
 
-        dbRef.child('info_text_1').on('value', s => { infoTexts[0] = s.val(); updateInfoDisplay(); });
-        dbRef.child('info_text_2').on('value', s => { infoTexts[1] = s.val(); updateInfoDisplay(); });
-        dbRef.child('info_text_3').on('value', s => { infoTexts[2] = s.val(); updateInfoDisplay(); });
-        dbRef.child('info_interval').on('value', s => { infoIntervalMs = (s.val() || 10) * 1000; });
+        <div class="form-group"><label>Isya</label><input type="text" id="isya" placeholder="19:10"></div>
+        <div class="form-group"><label>Imam Isya</label><input type="text" id="imam_isya" placeholder="Ustadz..."></div>
+    </div>
 
-        function updateInfoDisplay() {
-            let validInfos = infoTexts.filter(Boolean);
-            let el = document.getElementById('info-text');
+    <hr>
+
+    <!-- TAMBAHAN BARU: SLIDE INFO -->
+    <h2>📢 SLIDE INFO & PENGUMUMAN</h2>
+    <div class="form-group">
+        <label>Info Pertama</label>
+        <textarea id="info_text_1" placeholder="Kajian rutin ba'da maghrib..."></textarea>
+    </div>
+    <div class="form-group">
+        <label>Info Kedua</label>
+        <textarea id="info_text_2" placeholder="Jadwal Imam minggu ini..."></textarea>
+    </div>
+    <div class="form-group">
+        <label>Info Ketiga</label>
+        <textarea id="info_text_3" placeholder="Pengumuman kas masjid..."></textarea>
+    </div>
+    <div class="form-group">
+        <label>Kecepatan Slide Info (Detik)</label>
+        <input type="number" id="info_interval" placeholder="10" min="3" max="120">
+    </div>
+    <div class="form-group">
+        <label>Kas Masjid</label>
+        <input type="text" id="kas_masjid" placeholder="Rp 10.000.000">
+    </div>
+
+    <button onclick="simpanJadwal()" style="background: #28a745; color: white;">SIMPAN JADWAL & INFO</button>
+    <div class="status" id="status-jadwal">✅ Berhasil disimpan!</div>
+</div>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyC4CQMl5l1n1voweOgQouMD1kJcpHs-esU",
+        databaseURL: "https://gps-tracher-default-rtdb.firebaseio.com"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const dbRef = firebase.database().ref('masjid');
+
+    dbRef.once('value').then((snapshot) => {
+        const data = snapshot.val();
+        if(data) {
+            document.getElementById('nama_masjid').value = data.nama_masjid || '';
+            document.getElementById('background_url_1').value = data.background_url_1 || '';
+            document.getElementById('background_url_2').value = data.background_url_2 || '';
+            document.getElementById('background_url_3').value = data.background_url_3 || '';
+            document.getElementById('slide_interval').value = data.slide_interval || '10';
+            document.getElementById('running_text').value = data.running_text || '';
             
-            if (validInfos.length === 0) {
-                el.innerText = "Tidak ada info terbaru.";
-                return;
-            }
+            document.getElementById('title_jadwal').value = data.title_jadwal || '';
+            document.getElementById('title_info').value = data.title_info || '';
+            document.getElementById('title_kas').value = data.title_kas || '';
+
+            document.getElementById('warna_judul').value = data.warna_judul || '#ffc107';
+            document.getElementById('warna_jam').value = data.warna_jam || '#ffffff';
+            document.getElementById('warna_tanggal').value = data.warna_tanggal || '#ffc107';
+            document.getElementById('warna_jadwal').value = data.warna_jadwal || '#ffffff';
+            document.getElementById('warna_waktu').value = data.warna_waktu || '#00ff00';
+            document.getElementById('warna_imam').value = data.warna_imam || '#00e5ff';
+            document.getElementById('warna_info').value = data.warna_info || '#ffffff';
+            document.getElementById('warna_title_jadwal').value = data.warna_title_jadwal || '#ffc107';
+            document.getElementById('warna_title_info').value = data.warna_title_info || '#ffc107';
+            document.getElementById('warna_title_kas').value = data.warna_title_kas || '#ffc107';
+            document.getElementById('warna_running_text').value = data.warna_running_text || '#ffffff';
+
+            document.getElementById('warna_bg_imsak').value = data.warna_bg_imsak || '#444444';
+            document.getElementById('warna_bg_subuh').value = data.warna_bg_subuh || '#856404';
+            document.getElementById('warna_bg_syuruk').value = data.warna_bg_syuruk || '#444444';
+            document.getElementById('warna_bg_dzuhur').value = data.warna_bg_dzuhur || '#bd2130';
+            document.getElementById('warna_bg_ashar').value = data.warna_bg_ashar || '#117a8b';
+            document.getElementById('warna_bg_maghrib').value = data.warna_bg_maghrib || '#b35900';
+            document.getElementById('warna_bg_isya').value = data.warna_bg_isya || '#5a32a3';
+
+            document.getElementById('imsak').value = data.imsak || '';
+            document.getElementById('subuh').value = data.subuh || '';
+            document.getElementById('syuruk').value = data.syuruk || '';
+            document.getElementById('dzuhur').value = data.dzuhur || '';
+            document.getElementById('imam_subuh').value = data.imam_subuh || '';
+            document.getElementById('ashar').value = data.ashar || '';
+            document.getElementById('imam_dzuhur').value = data.imam_dzuhur || '';
+            document.getElementById('maghrib').value = data.maghrib || '';
+            document.getElementById('imam_ashar').value = data.imam_ashar || '';
+            document.getElementById('isya').value = data.isya || '';
+            document.getElementById('imam_maghrib').value = data.imam_maghrib || '';
+            document.getElementById('imam_isya').value = data.imam_isya || '';
             
-            // Efek Fade Out -> Ganti Teks -> Fade In
-            el.style.opacity = 0;
-            setTimeout(() => {
-                el.innerText = validInfos[currentInfo % validInfos.length];
-                el.style.opacity = 1;
-            }, 500);
+            document.getElementById('info_text_1').value = data.info_text_1 || '';
+            document.getElementById('info_text_2').value = data.info_text_2 || '';
+            document.getElementById('info_text_3').value = data.info_text_3 || '';
+            document.getElementById('info_interval').value = data.info_interval || '10';
+            document.getElementById('kas_masjid').value = data.kas_masjid || '';
         }
+    });
 
-        dbRef.child('kas_masjid').on('value', s => document.getElementById('kas-masjid').innerText = s.val() || "Rp 0");
-        dbRef.child('running_text').on('value', s => document.getElementById('running-text').innerText = s.val() || "Selamat datang...");
-        
-        dbRef.child('title_info').on('value', s => document.getElementById('title-info').innerText = s.val() || "ℹ️ INFO & PENGUMUMAN");
-        dbRef.child('title_kas').on('value', s => document.getElementById('title-kas').innerText = s.val() || "💰 KAS MASJID");
+    function simpanUtama() {
+        dbRef.update({
+            nama_masjid: document.getElementById('nama_masjid').value,
+            background_url_1: document.getElementById('background_url_1').value,
+            background_url_2: document.getElementById('background_url_2').value,
+            background_url_3: document.getElementById('background_url_3').value,
+            slide_interval: document.getElementById('slide_interval').value,
+            running_text: document.getElementById('running_text').value,
+            title_jadwal: document.getElementById('title_jadwal').value,
+            title_info: document.getElementById('title_info').value,
+            title_kas: document.getElementById('title_kas').value
+        }).then(() => {
+            const status = document.getElementById('status-utama');
+            status.style.display = 'block';
+            setTimeout(() => status.style.display = 'none', 3000);
+        });
+    }
 
-        dbRef.child('warna_judul').on('value', s => document.getElementById('masjid-name').style.color = s.val() || "#ffc107");
-        dbRef.child('warna_jam').on('value', s => document.getElementById('digital-time').style.color = s.val() || "#ffffff");
-        dbRef.child('warna_tanggal').on('value', s => document.getElementById('date-info').style.color = s.val() || "#ffc107");
-        dbRef.child('warna_jadwal').on('value', s => { let val = s.val() || "#ffffff"; document.querySelectorAll('.p-name').forEach(el => el.style.color = val); });
-        dbRef.child('warna_waktu').on('value', s => { let val = s.val() || "#00ff00"; document.querySelectorAll('.p-time').forEach(el => el.style.color = val); });
-        dbRef.child('warna_imam').on('value', s => { let val = s.val() || "#00e5ff"; document.querySelectorAll('.p-imam').forEach(el => el.style.color = val); });
-        dbRef.child('warna_info').on('value', s => { let val = s.val() || "#ffffff"; document.querySelectorAll('.info-list').forEach(el => el.style.color = val); });
-        dbRef.child('warna_title_info').on('value', s => document.getElementById('title-info').style.color = s.val() || "#ffc107");
-        dbRef.child('warna_title_kas').on('value', s => document.getElementById('title-kas').style.color = s.val() || "#ffc107");
-        dbRef.child('warna_running_text').on('value', s => document.getElementById('running-text').style.color = s.val() || "#ffffff");
+    function simpanWarna() {
+        dbRef.update({
+            warna_judul: document.getElementById('warna_judul').value,
+            warna_jam: document.getElementById('warna_jam').value,
+            warna_tanggal: document.getElementById('warna_tanggal').value,
+            warna_jadwal: document.getElementById('warna_jadwal').value,
+            warna_waktu: document.getElementById('warna_waktu').value,
+            warna_imam: document.getElementById('warna_imam').value,
+            warna_info: document.getElementById('warna_info').value,
+            warna_title_jadwal: document.getElementById('warna_title_jadwal').value,
+            warna_title_info: document.getElementById('warna_title_info').value,
+            warna_title_kas: document.getElementById('warna_title_kas').value,
+            warna_running_text: document.getElementById('warna_running_text').value
+        }).then(() => {
+            const status = document.getElementById('status-warna');
+            status.style.display = 'block';
+            setTimeout(() => status.style.display = 'none', 3000);
+        });
+    }
 
-        dbRef.child('warna_bg_imsak').on('value', s => document.getElementById('bg-imsak').style.backgroundColor = s.val() || "transparent");
-        dbRef.child('warna_bg_subuh').on('value', s => document.getElementById('bg-subuh').style.backgroundColor = s.val() || "transparent");
-        dbRef.child('warna_bg_syuruk').on('value', s => document.getElementById('bg-syuruk').style.backgroundColor = s.val() || "transparent");
-        dbRef.child('warna_bg_dzuhur').on('value', s => document.getElementById('bg-dzuhur').style.backgroundColor = s.val() || "transparent");
-        dbRef.child('warna_bg_ashar').on('value', s => document.getElementById('bg-ashar').style.backgroundColor = s.val() || "transparent");
-        dbRef.child('warna_bg_maghrib').on('value', s => document.getElementById('bg-maghrib').style.backgroundColor = s.val() || "transparent");
-        dbRef.child('warna_bg_isya').on('value', s => document.getElementById('bg-isya').style.backgroundColor = s.val() || "transparent");
+    function simpanWarnaSholat() {
+        dbRef.update({
+            warna_bg_imsak: document.getElementById('warna_bg_imsak').value,
+            warna_bg_subuh: document.getElementById('warna_bg_subuh').value,
+            warna_bg_syuruk: document.getElementById('warna_bg_syuruk').value,
+            warna_bg_dzuhur: document.getElementById('warna_bg_dzuhur').value,
+            warna_bg_ashar: document.getElementById('warna_bg_ashar').value,
+            warna_bg_maghrib: document.getElementById('warna_bg_maghrib').value,
+            warna_bg_isya: document.getElementById('warna_bg_isya').value
+        }).then(() => {
+            const status = document.getElementById('status-warna-sholat');
+            status.style.display = 'block';
+            setTimeout(() => status.style.display = 'none', 3000);
+        });
+    }
 
-        // SLIDESHOW WALLPAPER
-        let bgImages = [];
-        let currentBg = 0;
-        let activeBgLayer = 1;
-        let slideIntervalMs = 10000; 
-        let lastSlideTime = Date.now();
-
-        dbRef.child('background_url_1').on('value', s => { bgImages[0] = s.val(); updateBgDisplay(); });
-        dbRef.child('background_url_2').on('value', s => { bgImages[1] = s.val(); updateBgDisplay(); });
-        dbRef.child('background_url_3').on('value', s => { bgImages[2] = s.val(); updateBgDisplay(); });
-        dbRef.child('slide_interval').on('value', s => { slideIntervalMs = (s.val() || 10) * 1000; });
-
-        function updateBgDisplay() {
-            let validBgs = bgImages.filter(Boolean);
-            if (validBgs.length === 0) return;
-
-            let img = validBgs[currentBg % validBgs.length];
-            let activeLayer = document.getElementById('bg' + activeBgLayer);
-            let inactiveLayer = document.getElementById('bg' + (activeBgLayer === 1 ? 2 : 1));
-
-            inactiveLayer.style.backgroundImage = `url('${img}')`;
-            inactiveLayer.style.opacity = 1;
-            activeLayer.style.opacity = 0;
-
-            activeBgLayer = (activeBgLayer === 1 ? 2 : 1);
-        }
-
-        const clockFace = document.getElementById('clock-face');
-        for(let i = 1; i <= 12; i++) {
-            const num = document.createElement('div');
-            num.className = 'clock-num';
-            num.innerText = i;
-            const angle = (i * 30) * (Math.PI / 180); 
-            const x = Math.sin(angle) * 40; 
-            const y = -Math.cos(angle) * 40; 
-            num.style.left = `calc(50% + ${x}%)`;
-            num.style.top = `calc(50% + ${y}%)`;
-            num.style.transform = 'translate(-50%, -50%)';
-            clockFace.appendChild(num);
-        }
-
-        function timeToMinutes(t) {
-            if (!t || !t.includes(':')) return -1;
-            let parts = t.split(':');
-            return parseInt(parts[0]) * 60 + parseInt(parts[1]);
-        }
-
-        function updateClock() {
-            const now = new Date();
-            const hours = now.getHours();
-            const minutes = now.getMinutes();
-            const seconds = now.getSeconds();
-            
-            document.getElementById('digital-time').innerText = 
-                String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
-                
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const masehi = now.toLocaleDateString('id-ID', options);
-            try {
-                const hijri = new Intl.DateTimeFormat('id-ID-u-ca-islamic', { day: 'numeric', month: 'long', year: 'numeric' }).format(now);
-                document.getElementById('date-info').innerHTML = masehi + "<br>" + hijri + " H";
-            } catch (e) {
-                document.getElementById('date-info').innerText = masehi;
-            }
-
-            const hourDeg = (hours % 12) * 30 + minutes * 0.5;
-            const minuteDeg = minutes * 6 + seconds * 0.1;
-            const secondDeg = seconds * 6;
-            document.getElementById('hour-hand').style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
-            document.getElementById('minute-hand').style.transform = `translateX(-50%) rotate(${minuteDeg}deg)`;
-            document.getElementById('second-hand').style.transform = `translateX(-50%) rotate(${secondDeg}deg)`;
-
-            // Logika Wallpaper Slide
-            if (Date.now() - lastSlideTime > slideIntervalMs) {
-                let validBgs = bgImages.filter(Boolean);
-                if (validBgs.length > 1) {
-                    currentBg++;
-                    updateBgDisplay();
-                }
-                lastSlideTime = Date.now();
-            }
-
-            // Logika Info Slide
-            if (Date.now() - lastInfoTime > infoIntervalMs) {
-                let validInfos = infoTexts.filter(Boolean);
-                if (validInfos.length > 1) {
-                    currentInfo++;
-                    updateInfoDisplay();
-                }
-                lastInfoTime = Date.now();
-            }
-
-            let currentTimeStr = String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0');
-            let nowMinutes = hours * 60 + minutes;
-
-            if (currentTimeStr === "00:00") {
-                adzanPlayed = { subuh: false, dzuhur: false, ashar: false, maghrib: false, isya: false };
-                warningPlayed = { subuh: false, dzuhur: false, ashar: false, maghrib: false, isya: false };
-            }
-
-            let prayers = [
-                {name: "SUBUH", time: prayerTimes.subuh, key: "subuh"},
-                {name: "DZUHUR", time: prayerTimes.dzuhur, key: "dzuhur"},
-                {name: "ASHAR", time: prayerTimes.ashar, key: "ashar"},
-                {name: "MAGHRIB", time: prayerTimes.maghrib, key: "maghrib"},
-                {name: "ISYA", time: prayerTimes.isya, key: "isya"}
-            ];
-            
-            prayers.forEach(p => {
-                let pMin = timeToMinutes(p.time);
-                if (nowMinutes === pMin - 2 && !warningPlayed[p.key]) {
-                    showWarningOverlay(p.name);
-                    warningPlayed[p.key] = true;
-                }
-            });
-
-            if (isSoundActive) {
-                if (currentTimeStr === prayerTimes.subuh && !adzanPlayed.subuh) {
-                    adzanSubuhAudio.play().catch(e => console.log("Audio Error")); 
-                    adzanPlayed.subuh = true;
-                    showAdzanOverlay("SUBUH");
-                } else if (currentTimeStr === prayerTimes.dzuhur && !adzanPlayed.dzuhur) {
-                    adzanBiasaAudio.play().catch(e => console.log("Audio Error")); 
-                    adzanPlayed.dzuhur = true;
-                    showAdzanOverlay("DZUHUR");
-                } else if (currentTimeStr === prayerTimes.ashar && !adzanPlayed.ashar) {
-                    adzanBiasaAudio.play().catch(e => console.log("Audio Error")); 
-                    adzanPlayed.ashar = true;
-                    showAdzanOverlay("ASHAR");
-                } else if (currentTimeStr === prayerTimes.maghrib && !adzanPlayed.maghrib) {
-                    adzanBiasaAudio.play().catch(e => console.log("Audio Error")); 
-                    adzanPlayed.maghrib = true;
-                    showAdzanOverlay("MAGHRIB");
-                } else if (currentTimeStr === prayerTimes.isya && !adzanPlayed.isya) {
-                    adzanBiasaAudio.play().catch(e => console.log("Audio Error")); 
-                    adzanPlayed.isya = true;
-                    showAdzanOverlay("ISYA");
-                }
-            }
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
-    </script>
+    function simpanJadwal() {
+        dbRef.update({
+            imsak: document.getElementById('imsak').value,
+            subuh: document.getElementById('subuh').value,
+            syuruk: document.getElementById('syuruk').value,
+            dzuhur: document.getElementById('dzuhur').value,
+            imam_subuh: document.getElementById('imam_subuh').value,
+            ashar: document.getElementById('ashar').value,
+            imam_dzuhur: document.getElementById('imam_dzuhur').value,
+            maghrib: document.getElementById('maghrib').value,
+            imam_ashar: document.getElementById('imam_ashar').value,
+            isya: document.getElementById('isya').value,
+            imam_maghrib: document.getElementById('imam_maghrib').value,
+            imam_isya: document.getElementById('imam_isya').value,
+            info_text_1: document.getElementById('info_text_1').value,
+            info_text_2: document.getElementById('info_text_2').value,
+            info_text_3: document.getElementById('info_text_3').value,
+            info_interval: document.getElementById('info_interval').value,
+            kas_masjid: document.getElementById('kas_masjid').value
+        }).then(() => {
+            const status = document.getElementById('status-jadwal');
+            status.style.display = 'block';
+            setTimeout(() => status.style.display = 'none', 3000);
+        });
+    }
+</script>
 </body>
 </html>
