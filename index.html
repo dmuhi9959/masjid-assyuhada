@@ -10,9 +10,8 @@
         body {
             margin: 0; padding: 0; color: #fff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: grid; 
-            /* DIPERBAIKI: Tambah baris auto agar jadwal menempel di bawah */
-            grid-template-rows: auto 1fr auto auto; 
+            display: flex; 
+            flex-direction: column; 
             height: 100vh; 
             overflow: hidden; 
             background-color: #000;
@@ -35,6 +34,7 @@
         header {
             padding: 1.5vh 3vw; text-align: left; 
             display: flex; justify-content: space-between; align-items: center;
+            flex-shrink: 0;
         }
         header h1 { 
             margin: 0; color: #ffc107; 
@@ -49,7 +49,9 @@
         }
         #sound-btn { background: #ffc107; color: black; }
 
+        /* DIPERBAIKI: Pakai Flex 1 agar memaksa turun ke bawah */
         .main-content {
+            flex: 1; 
             display: flex; padding: 0 3vw; gap: 3vw; min-height: 0; 
         }
         
@@ -61,13 +63,13 @@
         .right-panel { flex: 1.2; display: flex; flex-direction: column; gap: 2vh; justify-content: center; text-align: right; overflow: hidden; }
         .info-box { padding: 1.5vh 0; border-top: 2px solid rgba(255,255,255,0.5); }
         .info-box h3 { margin: 0 0 1vh 0; color: #ffc107; font-size: clamp(1rem, 2.2vh, 1.4rem); text-shadow: 2px 2px 6px #000; }
-        .info-list { font-size: clamp(0.9rem, 2vh, 1.3rem); line-height: 1.5; color: #ffffff; font-weight: bold; text-shadow: 2px 2px 6px #000; }
+        .info-list { font-size: clamp(0.9rem, 2vh, 1.3rem); line-height: 1.5; color: #ffffff; font-weight: bold; text-shadow: 2px 2px 6px #000; transition: opacity 0.5s ease-in-out; } /* Efek fade untuk slide info */
         .kas-amount { color: #00ff00; font-weight: bold; font-size: clamp(1rem, 2.8vh, 1.6rem); margin-top: 0.5vh; text-shadow: 2px 2px 6px #000; }
 
-        /* DIPERBAIKI: Turunkan jadwal agar menempel ke bawah */
+        /* DIPERBAIKI: flex-shrink 0 agar tidak tertekan ke atas */
         .bottom-schedule { 
+            flex-shrink: 0;
             margin: 0 3vw; padding: 1vh 1vw; display: flex; justify-content: space-between; align-items: stretch; gap: 5px; 
-            align-self: end; /* Dorong ke bawah */
         }
         .prayer-item { 
             flex: 1; text-align: center; display: flex; flex-direction: column; justify-content: center;
@@ -79,6 +81,7 @@
         .p-imam { font-size: clamp(0.7rem, 1.5vh, 1rem); color: #00e5ff; text-shadow: 1px 1px 3px #000; margin-top: 5px; min-height: 1.5vh; }
 
         footer { 
+            flex-shrink: 0;
             background: rgba(0, 0, 0, 0.8); margin: 1.5vh 3vw; padding: 1.5vh 0; border-radius: 15px;
             overflow: hidden; white-space: nowrap; 
         }
@@ -114,7 +117,7 @@
         #adzan-overlay p { font-size: clamp(1.5rem, 4vh, 3rem); color: #4CAF50; margin: 0; font-weight: bold; }
 
         @media (max-width: 768px) {
-            body { height: auto; overflow-y: auto; display: flex; flex-direction: column; }
+            body { height: auto; overflow-y: auto; }
             .main-content { flex-direction: column; padding: 0 20px; }
             header { flex-direction: column; gap: 10px; }
             .left-panel { align-items: center; }
@@ -153,7 +156,7 @@
         <div class="right-panel glass-panel">
             <div class="info-box">
                 <h3 id="title-info">ℹ️ INFO & PENGUMUMAN</h3>
-                <div class="info-list" id="info-text">Kajian Rutin Setiap Ba'da Maghrib. Dipersilakan kepada jamaah untuk menjaga kebersihan masjid.</div>
+                <div class="info-list" id="info-text">Memuat info...</div>
             </div>
             <div class="info-box">
                 <h3 id="title-kas">💰 KAS MASJID</h3>
@@ -243,7 +246,34 @@
         dbRef.child('imam_maghrib').on('value', s => document.getElementById('maghrib-imam').innerText = s.val() || "");
         dbRef.child('imam_isya').on('value', s => document.getElementById('isya-imam').innerText = s.val() || "");
         
-        dbRef.child('info_text').on('value', s => document.getElementById('info-text').innerText = s.val() || "Tidak ada info terbaru.");
+        // SLIDESHOW INFO
+        let infoTexts = [];
+        let currentInfo = 0;
+        let infoIntervalMs = 10000;
+        let lastInfoTime = Date.now();
+
+        dbRef.child('info_text_1').on('value', s => { infoTexts[0] = s.val(); updateInfoDisplay(); });
+        dbRef.child('info_text_2').on('value', s => { infoTexts[1] = s.val(); updateInfoDisplay(); });
+        dbRef.child('info_text_3').on('value', s => { infoTexts[2] = s.val(); updateInfoDisplay(); });
+        dbRef.child('info_interval').on('value', s => { infoIntervalMs = (s.val() || 10) * 1000; });
+
+        function updateInfoDisplay() {
+            let validInfos = infoTexts.filter(Boolean);
+            let el = document.getElementById('info-text');
+            
+            if (validInfos.length === 0) {
+                el.innerText = "Tidak ada info terbaru.";
+                return;
+            }
+            
+            // Efek Fade Out -> Ganti Teks -> Fade In
+            el.style.opacity = 0;
+            setTimeout(() => {
+                el.innerText = validInfos[currentInfo % validInfos.length];
+                el.style.opacity = 1;
+            }, 500);
+        }
+
         dbRef.child('kas_masjid').on('value', s => document.getElementById('kas-masjid').innerText = s.val() || "Rp 0");
         dbRef.child('running_text').on('value', s => document.getElementById('running-text').innerText = s.val() || "Selamat datang...");
         
@@ -269,6 +299,7 @@
         dbRef.child('warna_bg_maghrib').on('value', s => document.getElementById('bg-maghrib').style.backgroundColor = s.val() || "transparent");
         dbRef.child('warna_bg_isya').on('value', s => document.getElementById('bg-isya').style.backgroundColor = s.val() || "transparent");
 
+        // SLIDESHOW WALLPAPER
         let bgImages = [];
         let currentBg = 0;
         let activeBgLayer = 1;
@@ -340,6 +371,7 @@
             document.getElementById('minute-hand').style.transform = `translateX(-50%) rotate(${minuteDeg}deg)`;
             document.getElementById('second-hand').style.transform = `translateX(-50%) rotate(${secondDeg}deg)`;
 
+            // Logika Wallpaper Slide
             if (Date.now() - lastSlideTime > slideIntervalMs) {
                 let validBgs = bgImages.filter(Boolean);
                 if (validBgs.length > 1) {
@@ -347,6 +379,16 @@
                     updateBgDisplay();
                 }
                 lastSlideTime = Date.now();
+            }
+
+            // Logika Info Slide
+            if (Date.now() - lastInfoTime > infoIntervalMs) {
+                let validInfos = infoTexts.filter(Boolean);
+                if (validInfos.length > 1) {
+                    currentInfo++;
+                    updateInfoDisplay();
+                }
+                lastInfoTime = Date.now();
             }
 
             let currentTimeStr = String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0');
