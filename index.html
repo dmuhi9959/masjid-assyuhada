@@ -14,8 +14,14 @@
             grid-template-rows: auto 1fr auto;
             height: 100vh; 
             overflow: hidden; 
-            background: url('https://images.unsplash.com/photo-1542816417-0983c9c9ad53?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed; 
-            background-size: cover;
+            background-color: #000;
+        }
+
+        /* Layer Background Slideshow */
+        .bg-layer {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-size: cover; background-position: center; z-index: -1;
+            opacity: 0; transition: opacity 2s ease-in-out;
         }
 
         .glass-panel {
@@ -42,7 +48,6 @@
             font-weight: bold; font-size: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
         #sound-btn { background: #ffc107; color: black; }
-        #test-warn-btn { background: #dc3545; color: white; }
 
         .main-content {
             display: flex; padding: 0 3vw; gap: 3vw; min-height: 0; 
@@ -86,7 +91,6 @@
         .second { width: 2px; height: 45%; margin-top: -45%; background: red; }
         .center-dot { position: absolute; top: 50%; left: 50%; width: 12px; height: 12px; background: #ffc107; border-radius: 50%; transform: translate(-50%, -50%); z-index: 11; }
 
-        /* EFEK LAYAR GELAP PERINGATAN (2 MENIT SEBELUM ADZAN) */
         #warning-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0,0,0,0.95); z-index: 9998;
@@ -97,7 +101,6 @@
         #warning-overlay h1 { font-size: clamp(2.5rem, 10vh, 6rem); color: #ffffff; margin: 20px 0; text-shadow: 0 0 20px #ffc107; text-transform: uppercase; }
         #warning-overlay p { font-size: clamp(1rem, 3vh, 2rem); color: #ccc; margin: 0; }
 
-        /* EFEK LAYAR GELAP SAAT ADZAN */
         #adzan-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0,0,0,0.98); z-index: 9999;
@@ -121,10 +124,12 @@
 </head>
 <body>
 
+    <div id="bg1" class="bg-layer"></div>
+    <div id="bg2" class="bg-layer"></div>
+
     <header class="glass-panel">
         <h1 id="masjid-name">MASJID AL-HIKMAH</h1>
         <div class="header-right">
-            <button id="test-warn-btn" class="header-btn" onclick="showWarningOverlay('SUBUH')">⚠️ Tes Peringatan</button>
             <button id="sound-btn" class="header-btn" onclick="aktifkanSuaraAdzan()">🔊 Aktifkan Otomatis</button>
         </div>
     </header>
@@ -169,14 +174,12 @@
         <div class="running-text" id="running-text">Selamat datang di Masjid Al-Hikmah. Mohon matikan HP sebelum memasuki area masjid. Jangan lupa berwudhu.</div>
     </footer>
 
-    <!-- OVERLAY PERINGATAN (2 MENIT SEBELUM ADZAN) -->
     <div id="warning-overlay">
         <h2>2 MENIT LAGI MASUK WAKTU ADZAN</h2>
         <h1 id="warning-prayer-name">SUBUH</h1>
         <p>Mohon siap-siap menuju Masjid</p>
     </div>
 
-    <!-- OVERLAY ADZAN -->
     <div id="adzan-overlay">
         <h2>WAKTUNYA SHOLAT</h2>
         <h1 id="adzan-prayer-name">SUBUH</h1>
@@ -205,7 +208,6 @@
         function aktifkanSuaraAdzan() {
             isSoundActive = true;
             document.getElementById('sound-btn').style.display = 'none';
-            alert("Suara Adzan diaktifkan! Adzan akan berbunyi otomatis saat waktu sholat tiba.");
         }
 
         function showWarningOverlay(namaSholat) {
@@ -242,8 +244,7 @@
         dbRef.child('info_text').on('value', s => document.getElementById('info-text').innerText = s.val() || "Tidak ada info terbaru.");
         dbRef.child('kas_masjid').on('value', s => document.getElementById('kas-masjid').innerText = s.val() || "Rp 0");
         dbRef.child('running_text').on('value', s => document.getElementById('running-text').innerText = s.val() || "Selamat datang...");
-        dbRef.child('background_url').on('value', s => { if(s.val()) document.body.style.backgroundImage = `url('${s.val()}')`; });
-
+        
         dbRef.child('title_info').on('value', s => document.getElementById('title-info').innerText = s.val() || "ℹ️ INFO & PENGUMUMAN");
         dbRef.child('title_kas').on('value', s => document.getElementById('title-kas').innerText = s.val() || "💰 KAS MASJID");
 
@@ -265,6 +266,40 @@
         dbRef.child('warna_bg_ashar').on('value', s => document.getElementById('bg-ashar').style.backgroundColor = s.val() || "transparent");
         dbRef.child('warna_bg_maghrib').on('value', s => document.getElementById('bg-maghrib').style.backgroundColor = s.val() || "transparent");
         dbRef.child('warna_bg_isya').on('value', s => document.getElementById('bg-isya').style.backgroundColor = s.val() || "transparent");
+
+        // --- LOGIKA SLIDESHOW WALLPAPER ---
+        let bgImages = [];
+        let currentBg = 0;
+        let bgLayer = 1;
+
+        dbRef.child('background_url_1').on('value', s => { if(s.val()) { bgImages[0] = s.val(); startSlideshow(); } });
+        dbRef.child('background_url_2').on('value', s => { if(s.val()) { bgImages[1] = s.val(); startSlideshow(); } });
+        dbRef.child('background_url_3').on('value', s => { if(s.val()) { bgImages[2] = s.val(); startSlideshow(); } });
+
+        function startSlideshow() {
+            let validBgs = bgImages.filter(Boolean);
+            if (validBgs.length === 0) return;
+
+            document.getElementById('bg1').style.backgroundImage = `url('${validBgs[0]}')`;
+            document.getElementById('bg1').style.opacity = 1;
+            document.getElementById('bg2').style.opacity = 0;
+            bgLayer = 2;
+            currentBg = 1;
+
+            setInterval(() => {
+                if (validBgs.length <= 1) return;
+                let img = validBgs[currentBg % validBgs.length];
+                let activeLayer = document.getElementById('bg' + bgLayer);
+                let inactiveLayer = document.getElementById('bg' + (bgLayer === 1 ? 2 : 1));
+
+                inactiveLayer.style.backgroundImage = `url('${img}')`;
+                inactiveLayer.style.opacity = 1;
+                activeLayer.style.opacity = 0;
+
+                bgLayer = (bgLayer === 1 ? 2 : 1);
+                currentBg++;
+            }, 10000); // Ganti tiap 10 detik
+        }
 
         const clockFace = document.getElementById('clock-face');
         for(let i = 1; i <= 12; i++) {
@@ -319,7 +354,6 @@
                 warningPlayed = { subuh: false, dzuhur: false, ashar: false, maghrib: false, isya: false };
             }
 
-            // CEK PERINGATAN 2 MENIT SEBELUM ADZAN
             let prayers = [
                 {name: "SUBUH", time: prayerTimes.subuh, key: "subuh"},
                 {name: "DZUHUR", time: prayerTimes.dzuhur, key: "dzuhur"},
@@ -336,7 +370,6 @@
                 }
             });
 
-            // CEK WAKTUNYA ADZAN (HANYA JIKA TOMBOL AKTIF DIKLIK)
             if (isSoundActive) {
                 if (currentTimeStr === prayerTimes.subuh && !adzanPlayed.subuh) {
                     adzanSubuhAudio.play().catch(e => console.log("Audio Error")); 
