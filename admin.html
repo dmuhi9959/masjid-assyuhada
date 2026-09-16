@@ -12,7 +12,7 @@
         h2 { text-align: center; color: #0a0a2a; margin-top: 0; }
         .form-group { margin-bottom: 20px; }
         label { display: block; font-weight: bold; margin-bottom: 8px; color: #555; }
-        input[type="text"], textarea, input[type="url"] { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        input[type="text"], textarea, input[type="url"], input[type="number"] { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
         textarea { resize: vertical; min-height: 80px; }
         button { width: 100%; padding: 15px; background: #ffc107; color: black; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         button:hover { background: #e0a800; }
@@ -45,6 +45,12 @@
     <div class="form-group">
         <label>Link Wallpaper 3</label>
         <input type="url" id="background_url_3" placeholder="https://example.com/foto3.jpg">
+    </div>
+    
+    <!-- TAMBAHAN BARU: KECEPATAN SLIDE -->
+    <div class="form-group">
+        <label>Kecepatan Slide Wallpaper (Detik)</label>
+        <input type="number" id="slide_interval" placeholder="10" min="3" max="120">
     </div>
 
     <div class="form-group">
@@ -157,6 +163,7 @@
             document.getElementById('background_url_1').value = data.background_url_1 || '';
             document.getElementById('background_url_2').value = data.background_url_2 || '';
             document.getElementById('background_url_3').value = data.background_url_3 || '';
+            document.getElementById('slide_interval').value = data.slide_interval || '10';
             document.getElementById('running_text').value = data.running_text || '';
             
             document.getElementById('title_jadwal').value = data.title_jadwal || '';
@@ -207,6 +214,7 @@
             background_url_1: document.getElementById('background_url_1').value,
             background_url_2: document.getElementById('background_url_2').value,
             background_url_3: document.getElementById('background_url_3').value,
+            slide_interval: document.getElementById('slide_interval').value,
             running_text: document.getElementById('running_text').value,
             title_jadwal: document.getElementById('title_jadwal').value,
             title_info: document.getElementById('title_info').value,
