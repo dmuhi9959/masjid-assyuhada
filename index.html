@@ -36,55 +36,55 @@
             text-shadow: 3px 3px 6px #000, -2px -2px 6px #000, 0 0 15px #000; 
         }
 
-        #sound-btn {
-            padding: 10px 20px; background: #ffc107; color: black; border: none;
-            border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        .header-right { display: flex; gap: 10px; }
+        .header-btn {
+            padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; 
+            font-weight: bold; font-size: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
+        #sound-btn { background: #ffc107; color: black; }
+        #test-btn { background: #28a745; color: white; }
 
         .main-content {
-            display: flex; padding: 0 3vw; gap: 3vw;
-            min-height: 0; 
+            display: flex; padding: 0 3vw; gap: 3vw; min-height: 0; 
         }
         
-        .left-panel {
-            flex: 1; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; 
-        }
+        .left-panel { flex: 1; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
         .clock-container { position: relative; width: 25vh; height: 25vh; max-width: 220px; max-height: 220px; margin-bottom: 3vh; flex-shrink: 0; }
-        .digital-clock { 
-            font-size: clamp(2rem, 6vh, 4.5rem); color: #ffffff; font-weight: bold; 
-            text-shadow: 3px 3px 8px #000, -2px -2px 6px #000; line-height: 1;
-        }
-        .date-info { 
-            font-size: clamp(1rem, 2.5vh, 1.5rem); color: #ffc107; margin-top: 1vh; 
-            text-shadow: 2px 2px 6px #000; 
-        }
+        .digital-clock { font-size: clamp(2rem, 6vh, 4.5rem); color: #ffffff; font-weight: bold; text-shadow: 3px 3px 8px #000, -2px -2px 6px #000; line-height: 1; }
+        .date-info { font-size: clamp(1rem, 2.5vh, 1.5rem); color: #ffc107; margin-top: 1vh; text-shadow: 2px 2px 6px #000; }
         
-        .right-panel {
-            flex: 1.2; display: flex; flex-direction: column; gap: 2vh; justify-content: center;
-            text-align: right; overflow: hidden; 
-        }
+        .right-panel { flex: 1.2; display: flex; flex-direction: column; gap: 2vh; justify-content: center; text-align: right; overflow: hidden; }
         .info-box { padding: 1.5vh 0; border-top: 2px solid rgba(255,255,255,0.5); }
         .info-box h3 { margin: 0 0 1vh 0; color: #ffc107; font-size: clamp(1rem, 2.2vh, 1.4rem); text-shadow: 2px 2px 6px #000; }
         .info-list { font-size: clamp(0.9rem, 2vh, 1.3rem); line-height: 1.5; color: #ffffff; font-weight: bold; text-shadow: 2px 2px 6px #000; }
         .kas-amount { color: #00ff00; font-weight: bold; font-size: clamp(1rem, 2.8vh, 1.6rem); margin-top: 0.5vh; text-shadow: 2px 2px 6px #000; }
 
-        .bottom-schedule {
-            background: rgba(0, 0, 0, 0.7); 
-            margin: 1.5vh 3vw; padding: 1.5vh 2vw; border-radius: 15px;
-            display: flex; justify-content: space-between; align-items: center; gap: 1vw;
+        /* DIPERBAIKI: Margin bawah dihilangkan agar menempel dengan footer */
+        .bottom-schedule { 
+            background: rgba(0, 0, 0, 0.8); 
+            margin: 0 3vw; 
+            padding: 1.5vh 1vw; 
+            border-radius: 15px 15px 0 0;
+            display: flex; justify-content: space-between; align-items: stretch; gap: 5px; 
         }
-        .prayer-item {
-            flex: 1; text-align: center; display: flex; flex-direction: column; 
-            border-right: 1px solid rgba(255,255,255,0.2); padding: 0 5px;
+        .prayer-item { 
+            flex: 1; text-align: center; display: flex; flex-direction: column; justify-content: center;
+            border-right: 1px solid rgba(255,255,255,0.1); 
+            padding: 1vh 5px; border-radius: 8px; 
+            transition: background-color 0.5s; /* Animasi halus saat warna berubah */
         }
         .prayer-item:last-child { border-right: none; }
         .p-name { font-size: clamp(0.9rem, 1.8vh, 1.3rem); color: #ffffff; font-weight: bold; text-shadow: 2px 2px 4px #000; margin-bottom: 5px; }
         .p-time { font-size: clamp(1.1rem, 2.5vh, 1.8rem); color: #00ff00; font-weight: bold; text-shadow: 2px 2px 6px #000; }
         .p-imam { font-size: clamp(0.7rem, 1.5vh, 1rem); color: #00e5ff; text-shadow: 1px 1px 3px #000; margin-top: 5px; min-height: 1.5vh; }
 
-        footer {
-            background: rgba(0, 0, 0, 0.8); padding: 1.5vh 0; overflow: hidden; white-space: nowrap;
+        /* DIPERBAIKI: Mengikuti lebar jadwal di atasnya agar sejajar */
+        footer { 
+            background: rgba(0, 0, 0, 0.9); 
+            margin: 0 3vw; 
+            padding: 1.5vh 0; 
+            border-radius: 0 0 15px 15px;
+            overflow: hidden; white-space: nowrap; 
         }
         .running-text { display: inline-block; font-size: clamp(1rem, 2.5vh, 1.5rem); color: #fff; animation: scroll 25s linear infinite; text-shadow: 2px 2px 4px #000; }
         @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
@@ -103,8 +103,9 @@
             header { flex-direction: column; gap: 10px; }
             .left-panel { align-items: center; }
             .right-panel { text-align: center; }
-            .bottom-schedule { flex-wrap: wrap; justify-content: center; gap: 15px; }
+            .bottom-schedule { flex-wrap: wrap; justify-content: center; gap: 10px; border-radius: 15px; }
             .prayer-item { flex: 1 1 40%; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; }
+            footer { border-radius: 0 0 15px 15px; }
         }
     </style>
 </head>
@@ -112,7 +113,10 @@
 
     <header class="glass-panel">
         <h1 id="masjid-name">MASJID AL-HIKMAH</h1>
-        <button id="sound-btn" onclick="aktifkanSuaraAdzan()">🔊 Aktifkan Suara Adzan</button>
+        <div class="header-right">
+            <button id="test-btn" class="header-btn" onclick="tesAdzan()">🔔 Tes Adzan</button>
+            <button id="sound-btn" class="header-btn" onclick="aktifkanSuaraAdzan()">🔊 Aktifkan Otomatis</button>
+        </div>
     </header>
 
     <div class="main-content">
@@ -134,7 +138,6 @@
                 <h3 id="title-info">ℹ️ INFO & PENGUMUMAN</h3>
                 <div class="info-list" id="info-text">Kajian Rutin Setiap Ba'da Maghrib. Dipersilakan kepada jamaah untuk menjaga kebersihan masjid.</div>
             </div>
-
             <div class="info-box">
                 <h3 id="title-kas">💰 KAS MASJID</h3>
                 <div class="kas-amount" id="kas-masjid">Rp 0</div>
@@ -143,41 +146,13 @@
     </div>
 
     <div class="bottom-schedule">
-        <div class="prayer-item">
-            <span class="p-name">Imsak</span>
-            <span class="p-time" id="imsak">--:--</span>
-            <span class="p-imam"></span>
-        </div>
-        <div class="prayer-item">
-            <span class="p-name">Subuh</span>
-            <span class="p-time" id="subuh">04:30</span>
-            <span class="p-imam" id="subuh-imam"></span>
-        </div>
-        <div class="prayer-item">
-            <span class="p-name">Syuruk</span>
-            <span class="p-time" id="syuruk">--:--</span>
-            <span class="p-imam"></span>
-        </div>
-        <div class="prayer-item">
-            <span class="p-name">Dzuhur</span>
-            <span class="p-time" id="dzuhur">12:00</span>
-            <span class="p-imam" id="dzuhur-imam"></span>
-        </div>
-        <div class="prayer-item">
-            <span class="p-name">Ashar</span>
-            <span class="p-time" id="ashar">15:15</span>
-            <span class="p-imam" id="ashar-imam"></span>
-        </div>
-        <div class="prayer-item">
-            <span class="p-name">Maghrib</span>
-            <span class="p-time" id="maghrib">18:00</span>
-            <span class="p-imam" id="maghrib-imam"></span>
-        </div>
-        <div class="prayer-item">
-            <span class="p-name">Isya</span>
-            <span class="p-time" id="isya">19:10</span>
-            <span class="p-imam" id="isya-imam"></span>
-        </div>
+        <div class="prayer-item" id="bg-imsak"><span class="p-name">Imsak</span><span class="p-time" id="imsak">--:--</span><span class="p-imam"></span></div>
+        <div class="prayer-item" id="bg-subuh"><span class="p-name">Subuh</span><span class="p-time" id="subuh">04:30</span><span class="p-imam" id="subuh-imam"></span></div>
+        <div class="prayer-item" id="bg-syuruk"><span class="p-name">Syuruk</span><span class="p-time" id="syuruk">--:--</span><span class="p-imam"></span></div>
+        <div class="prayer-item" id="bg-dzuhur"><span class="p-name">Dzuhur</span><span class="p-time" id="dzuhur">12:00</span><span class="p-imam" id="dzuhur-imam"></span></div>
+        <div class="prayer-item" id="bg-ashar"><span class="p-name">Ashar</span><span class="p-time" id="ashar">15:15</span><span class="p-imam" id="ashar-imam"></span></div>
+        <div class="prayer-item" id="bg-maghrib"><span class="p-name">Maghrib</span><span class="p-time" id="maghrib">18:00</span><span class="p-imam" id="maghrib-imam"></span></div>
+        <div class="prayer-item" id="bg-isya"><span class="p-name">Isya</span><span class="p-time" id="isya">19:10</span><span class="p-imam" id="isya-imam"></span></div>
     </div>
 
     <footer class="glass-panel">
@@ -198,11 +173,17 @@
 
         const adzanSubuhAudio = new Audio('adzan-subuh.mp3');
         const adzanBiasaAudio = new Audio('adzan-biasa.mp3');
+        
+        adzanSubuhAudio.onerror = () => alert("File adzan-subuh.mp3 TIDAK DITEMUKAN! Cek nama file di GitHub.");
+        adzanBiasaAudio.onerror = () => alert("File adzan-biasa.mp3 TIDAK DITEMUKAN! Cek nama file di GitHub.");
 
         function aktifkanSuaraAdzan() {
             isSoundActive = true;
             document.getElementById('sound-btn').style.display = 'none';
-            alert("Suara Adzan diaktifkan! Adzan akan berbunyi otomatis saat waktu sholat tiba.");
+        }
+
+        function tesAdzan() {
+            adzanBiasaAudio.play().catch(e => alert("Gagal! Browser memblokir suara atau file tidak ada."));
         }
 
         dbRef.child('nama_masjid').on('value', s => document.getElementById('masjid-name').innerText = s.val() || "MASJID AL-HIKMAH");
@@ -223,9 +204,7 @@
         dbRef.child('info_text').on('value', s => document.getElementById('info-text').innerText = s.val() || "Tidak ada info terbaru.");
         dbRef.child('kas_masjid').on('value', s => document.getElementById('kas-masjid').innerText = s.val() || "Rp 0");
         dbRef.child('running_text').on('value', s => document.getElementById('running-text').innerText = s.val() || "Selamat datang...");
-        dbRef.child('background_url').on('value', s => {
-            if(s.val()) document.body.style.backgroundImage = `url('${s.val()}')`;
-        });
+        dbRef.child('background_url').on('value', s => { if(s.val()) document.body.style.backgroundImage = `url('${s.val()}')`; });
 
         dbRef.child('title_info').on('value', s => document.getElementById('title-info').innerText = s.val() || "ℹ️ INFO & PENGUMUMAN");
         dbRef.child('title_kas').on('value', s => document.getElementById('title-kas').innerText = s.val() || "💰 KAS MASJID");
@@ -233,15 +212,22 @@
         dbRef.child('warna_judul').on('value', s => document.getElementById('masjid-name').style.color = s.val() || "#ffc107");
         dbRef.child('warna_jam').on('value', s => document.getElementById('digital-time').style.color = s.val() || "#ffffff");
         dbRef.child('warna_tanggal').on('value', s => document.getElementById('date-info').style.color = s.val() || "#ffc107");
-        
         dbRef.child('warna_jadwal').on('value', s => { let val = s.val() || "#ffffff"; document.querySelectorAll('.p-name').forEach(el => el.style.color = val); });
         dbRef.child('warna_waktu').on('value', s => { let val = s.val() || "#00ff00"; document.querySelectorAll('.p-time').forEach(el => el.style.color = val); });
         dbRef.child('warna_imam').on('value', s => { let val = s.val() || "#00e5ff"; document.querySelectorAll('.p-imam').forEach(el => el.style.color = val); });
-        
         dbRef.child('warna_info').on('value', s => { let val = s.val() || "#ffffff"; document.querySelectorAll('.info-list').forEach(el => el.style.color = val); });
         dbRef.child('warna_title_info').on('value', s => document.getElementById('title-info').style.color = s.val() || "#ffc107");
         dbRef.child('warna_title_kas').on('value', s => document.getElementById('title-kas').style.color = s.val() || "#ffc107");
         dbRef.child('warna_running_text').on('value', s => document.getElementById('running-text').style.color = s.val() || "#ffffff");
+
+        // --- WARNA TEMA WAKTU SHOLAT ---
+        dbRef.child('warna_bg_imsak').on('value', s => document.getElementById('bg-imsak').style.backgroundColor = s.val() || "transparent");
+        dbRef.child('warna_bg_subuh').on('value', s => document.getElementById('bg-subuh').style.backgroundColor = s.val() || "transparent");
+        dbRef.child('warna_bg_syuruk').on('value', s => document.getElementById('bg-syuruk').style.backgroundColor = s.val() || "transparent");
+        dbRef.child('warna_bg_dzuhur').on('value', s => document.getElementById('bg-dzuhur').style.backgroundColor = s.val() || "transparent");
+        dbRef.child('warna_bg_ashar').on('value', s => document.getElementById('bg-ashar').style.backgroundColor = s.val() || "transparent");
+        dbRef.child('warna_bg_maghrib').on('value', s => document.getElementById('bg-maghrib').style.backgroundColor = s.val() || "transparent");
+        dbRef.child('warna_bg_isya').on('value', s => document.getElementById('bg-isya').style.backgroundColor = s.val() || "transparent");
 
         const clockFace = document.getElementById('clock-face');
         for(let i = 1; i <= 12; i++) {
@@ -282,7 +268,6 @@
             document.getElementById('minute-hand').style.transform = `translateX(-50%) rotate(${minuteDeg}deg)`;
             document.getElementById('second-hand').style.transform = `translateX(-50%) rotate(${secondDeg}deg)`;
 
-            // --- LOGIKA ADZAN OTOMATIS DENGAN TOLERANSI WAKTU ---
             let currentTimeStr = String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0');
             let currentTimeMinus1 = String(hours).padStart(2, '0') + ":" + String(Math.max(0, minutes - 1)).padStart(2, '0');
 
@@ -291,7 +276,6 @@
             }
 
             if (isSoundActive) {
-                // Cek dengan toleransi 1 menit (kalau kelewatan 1 menik masih bisa bunyi)
                 if ((currentTimeStr === prayerTimes.subuh || currentTimeMinus1 === prayerTimes.subuh) && !adzanPlayed.subuh) {
                     adzanSubuhAudio.play(); adzanPlayed.subuh = true;
                 } else if ((currentTimeStr === prayerTimes.dzuhur || currentTimeMinus1 === prayerTimes.dzuhur) && !adzanPlayed.dzuhur) {
