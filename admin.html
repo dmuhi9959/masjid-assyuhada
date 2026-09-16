@@ -47,7 +47,6 @@
         <input type="url" id="background_url_3" placeholder="https://example.com/foto3.jpg">
     </div>
     
-    <!-- TAMBAHAN BARU: KECEPATAN SLIDE -->
     <div class="form-group">
         <label>Kecepatan Slide Wallpaper (Detik)</label>
         <input type="number" id="slide_interval" placeholder="10" min="3" max="120">
@@ -135,9 +134,25 @@
         <div class="form-group"><label>Imam Isya</label><input type="text" id="imam_isya" placeholder="Ustadz..."></div>
     </div>
 
+    <hr>
+
+    <!-- TAMBAHAN BARU: SLIDE INFO -->
+    <h2>📢 SLIDE INFO & PENGUMUMAN</h2>
     <div class="form-group">
-        <label>Info & Pengumuman</label>
-        <textarea id="info_text" placeholder="Kajian rutin ba'da maghrib..."></textarea>
+        <label>Info Pertama</label>
+        <textarea id="info_text_1" placeholder="Kajian rutin ba'da maghrib..."></textarea>
+    </div>
+    <div class="form-group">
+        <label>Info Kedua</label>
+        <textarea id="info_text_2" placeholder="Jadwal Imam minggu ini..."></textarea>
+    </div>
+    <div class="form-group">
+        <label>Info Ketiga</label>
+        <textarea id="info_text_3" placeholder="Pengumuman kas masjid..."></textarea>
+    </div>
+    <div class="form-group">
+        <label>Kecepatan Slide Info (Detik)</label>
+        <input type="number" id="info_interval" placeholder="10" min="3" max="120">
     </div>
     <div class="form-group">
         <label>Kas Masjid</label>
@@ -203,7 +218,10 @@
             document.getElementById('imam_maghrib').value = data.imam_maghrib || '';
             document.getElementById('imam_isya').value = data.imam_isya || '';
             
-            document.getElementById('info_text').value = data.info_text || '';
+            document.getElementById('info_text_1').value = data.info_text_1 || '';
+            document.getElementById('info_text_2').value = data.info_text_2 || '';
+            document.getElementById('info_text_3').value = data.info_text_3 || '';
+            document.getElementById('info_interval').value = data.info_interval || '10';
             document.getElementById('kas_masjid').value = data.kas_masjid || '';
         }
     });
@@ -276,7 +294,10 @@
             isya: document.getElementById('isya').value,
             imam_maghrib: document.getElementById('imam_maghrib').value,
             imam_isya: document.getElementById('imam_isya').value,
-            info_text: document.getElementById('info_text').value,
+            info_text_1: document.getElementById('info_text_1').value,
+            info_text_2: document.getElementById('info_text_2').value,
+            info_text_3: document.getElementById('info_text_3').value,
+            info_interval: document.getElementById('info_interval').value,
             kas_masjid: document.getElementById('kas_masjid').value
         }).then(() => {
             const status = document.getElementById('status-jadwal');
