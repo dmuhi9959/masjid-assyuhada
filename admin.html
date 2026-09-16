@@ -42,15 +42,15 @@
         <textarea id="running_text" placeholder="Selamat datang di masjid..."></textarea>
     </div>
     <div class="form-group">
-        <label>Jadwal</label>
+        <label>Judul Jadwal</label>
         <input type="text" id="title_jadwal" placeholder="JADWAL SHOLAT & IMAM">
     </div>
     <div class="form-group">
-        <label>Info</label>
+        <label>Judul Info</label>
         <input type="text" id="title_info" placeholder="ℹ️ INFO & PENGUMUMAN">
     </div>
     <div class="form-group">
-        <label>SALDO Kas</label>
+        <label>Judul Kas</label>
         <input type="text" id="title_kas" placeholder="💰 KAS MASJID">
     </div>
 
@@ -61,34 +61,51 @@
 
     <h2>🎨 PENGATURAN WARNA TEKS</h2>
     <div class="color-grid">
-        <div class="color-item"><label>warna Nama Masjid</label><input type="color" id="warna_judul" value="#ffc107"></div>
-        <div class="color-item"><label>warna Jam Digital</label><input type="color" id="warna_jam" value="#ffffff"></div>
-        <div class="color-item"><label>warna Tanggal</label><input type="color" id="warna_tanggal" value="#ffc107"></div>
-        <div class="color-item"><label>warna Nama waktu</label><input type="color" id="warna_jadwal" value="#ffffff"></div>
-        <div class="color-item"><label>warna Waktu Sholat</label><input type="color" id="warna_waktu" value="#00ff00"></div>
-        <div class="color-item"><label>warna Nama Imam</label><input type="color" id="warna_imam" value="#00e5ff"></div>
-        <div class="color-item"><label>warna Info & Pengumuman</label><input type="color" id="warna_info" value="#ffffff"></div>
-        <div class="color-item"><label>warna Jadwal</label><input type="color" id="warna_title_jadwal" value="#ffc107"></div>
-        <div class="color-item"><label>warna Info</label><input type="color" id="warna_title_info" value="#ffc107"></div>
-        <div class="color-item"><label>warna Kas</label><input type="color" id="warna_title_kas" value="#ffc107"></div>
-        <div class="color-item"><label>warna runingtex</label><input type="color" id="warna_running_text" value="#ffffff"></div>
+        <div class="color-item"><label>Judul Masjid</label><input type="color" id="warna_judul" value="#ffc107"></div>
+        <div class="color-item"><label>Jam Digital</label><input type="color" id="warna_jam" value="#ffffff"></div>
+        <div class="color-item"><label>Tanggal</label><input type="color" id="warna_tanggal" value="#ffc107"></div>
+        <div class="color-item"><label>Nama Sholat</label><input type="color" id="warna_jadwal" value="#ffffff"></div>
+        <div class="color-item"><label>Waktu Sholat</label><input type="color" id="warna_waktu" value="#00ff00"></div>
+        <div class="color-item"><label>Nama Imam</label><input type="color" id="warna_imam" value="#00e5ff"></div>
+        <div class="color-item"><label>Info & Pengumuman</label><input type="color" id="warna_info" value="#ffffff"></div>
+        <div class="color-item"><label>Judul Jadwal</label><input type="color" id="warna_title_jadwal" value="#ffc107"></div>
+        <div class="color-item"><label>Judul Info</label><input type="color" id="warna_title_info" value="#ffc107"></div>
+        <div class="color-item"><label>Judul Kas</label><input type="color" id="warna_title_kas" value="#ffc107"></div>
+        <div class="color-item"><label>Teks Berjalan</label><input type="color" id="warna_running_text" value="#ffffff"></div>
     </div>
 
-    <button onclick="simpanWarna()" style="background: #007bff; color: white; margin-top: 20px;">SIMPAN WARNA</button>
+    <button onclick="simpanWarna()" style="background: #007bff; color: white; margin-top: 20px;">SIMPAN WARNA TEKS</button>
     <div class="status" id="status-warna">✅ Warna disimpan!</div>
+
+    <hr>
+
+    <!-- TAMBAHAN BARU: WARNA TEMA SHOLAT -->
+    <h2>🌅 WARNA TEMA WAKTU SHOLAT</h2>
+    <div class="color-grid">
+        <div class="color-item"><label>Tema Imsak</label><input type="color" id="warna_bg_imsak" value="#444444"></div>
+        <div class="color-item"><label>Tema Subuh</label><input type="color" id="warna_bg_subuh" value="#856404"></div>
+        <div class="color-item"><label>Tema Syuruk</label><input type="color" id="warna_bg_syuruk" value="#444444"></div>
+        <div class="color-item"><label>Tema Dzuhur</label><input type="color" id="warna_bg_dzuhur" value="#bd2130"></div>
+        <div class="color-item"><label>Tema Ashar</label><input type="color" id="warna_bg_ashar" value="#117a8b"></div>
+        <div class="color-item"><label>Tema Maghrib</label><input type="color" id="warna_bg_maghrib" value="#b35900"></div>
+        <div class="color-item"><label>Tema Isya</label><input type="color" id="warna_bg_isya" value="#5a32a3"></div>
+    </div>
+
+    <button onclick="simpanWarnaSholat()" style="background: #17a2b8; color: white; margin-top: 20px;">SIMPAN TEMA SHOLAT</button>
+    <div class="status" id="status-warna-sholat">✅ Tema Sholat disimpan!</div>
 
     <hr>
 
     <h2>🕌 JADWAL SHOLAT & IMAM</h2>
     <div class="grid-2">
         <div class="form-group"><label>Imsak</label><input type="text" id="imsak" placeholder="04:20"></div>
-        <div class="form-group"></div> <!-- Kosong biar rapi -->
+        <div class="form-group"></div>
         
         <div class="form-group"><label>Subuh</label><input type="text" id="subuh" placeholder="04:30"></div>
         <div class="form-group"><label>Imam Subuh</label><input type="text" id="imam_subuh" placeholder="Ustadz..."></div>
 
         <div class="form-group"><label>Syuruk</label><input type="text" id="syuruk" placeholder="05:45"></div>
-        <div class="form-group"></div> <!-- Kosong biar rapi -->
+        <div class="form-group"></div>
 
         <div class="form-group"><label>Dzuhur</label><input type="text" id="dzuhur" placeholder="12:00"></div>
         <div class="form-group"><label>Imam Dzuhur</label><input type="text" id="imam_dzuhur" placeholder="Ustadz..."></div>
@@ -147,6 +164,14 @@
             document.getElementById('warna_title_kas').value = data.warna_title_kas || '#ffc107';
             document.getElementById('warna_running_text').value = data.warna_running_text || '#ffffff';
 
+            document.getElementById('warna_bg_imsak').value = data.warna_bg_imsak || '#444444';
+            document.getElementById('warna_bg_subuh').value = data.warna_bg_subuh || '#856404';
+            document.getElementById('warna_bg_syuruk').value = data.warna_bg_syuruk || '#444444';
+            document.getElementById('warna_bg_dzuhur').value = data.warna_bg_dzuhur || '#bd2130';
+            document.getElementById('warna_bg_ashar').value = data.warna_bg_ashar || '#117a8b';
+            document.getElementById('warna_bg_maghrib').value = data.warna_bg_maghrib || '#b35900';
+            document.getElementById('warna_bg_isya').value = data.warna_bg_isya || '#5a32a3';
+
             document.getElementById('imsak').value = data.imsak || '';
             document.getElementById('subuh').value = data.subuh || '';
             document.getElementById('syuruk').value = data.syuruk || '';
@@ -195,6 +220,23 @@
             warna_running_text: document.getElementById('warna_running_text').value
         }).then(() => {
             const status = document.getElementById('status-warna');
+            status.style.display = 'block';
+            setTimeout(() => status.style.display = 'none', 3000);
+        });
+    }
+
+    // FUNGSI BARU UNTUK TEMA SHOLAT
+    function simpanWarnaSholat() {
+        dbRef.update({
+            warna_bg_imsak: document.getElementById('warna_bg_imsak').value,
+            warna_bg_subuh: document.getElementById('warna_bg_subuh').value,
+            warna_bg_syuruk: document.getElementById('warna_bg_syuruk').value,
+            warna_bg_dzuhur: document.getElementById('warna_bg_dzuhur').value,
+            warna_bg_ashar: document.getElementById('warna_bg_ashar').value,
+            warna_bg_maghrib: document.getElementById('warna_bg_maghrib').value,
+            warna_bg_isya: document.getElementById('warna_bg_isya').value
+        }).then(() => {
+            const status = document.getElementById('status-warna-sholat');
             status.style.display = 'block';
             setTimeout(() => status.style.display = 'none', 3000);
         });
