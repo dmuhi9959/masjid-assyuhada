@@ -46,10 +46,27 @@
         <label>Link Wallpaper 3</label>
         <input type="url" id="background_url_3" placeholder="https://example.com/foto3.jpg">
     </div>
-    
     <div class="form-group">
         <label>Kecepatan Slide Wallpaper (Detik)</label>
         <input type="number" id="slide_interval" placeholder="10" min="3" max="120">
+    </div>
+
+    <hr>
+
+    <!-- TAMBAHAN: LINK TARTIL MP3 -->
+    <h2>🎵 LINK MP3 MURATTAL (TARTIL)</h2>
+    <p style="font-size: 12px; color: #888; margin-bottom: 15px;">Cari file MP3 di internet, copy link-nya, paste di sini. (Contoh: link dari Archive.org).</p>
+    <div class="form-group">
+        <label>Link Murattal 1</label>
+        <input type="url" id="tartil_url_1" placeholder="https://archive.org/.../surah1.mp3">
+    </div>
+    <div class="form-group">
+        <label>Link Murattal 2</label>
+        <input type="url" id="tartil_url_2" placeholder="https://archive.org/.../surah2.mp3">
+    </div>
+    <div class="form-group">
+        <label>Link Murattal 3</label>
+        <input type="url" id="tartil_url_3" placeholder="https://archive.org/.../surah3.mp3">
     </div>
 
     <div class="form-group">
@@ -114,22 +131,16 @@
     <div class="grid-2">
         <div class="form-group"><label>Imsak</label><input type="text" id="imsak" placeholder="04:20"></div>
         <div class="form-group"></div>
-        
         <div class="form-group"><label>Subuh</label><input type="text" id="subuh" placeholder="04:30"></div>
         <div class="form-group"><label>Imam Subuh</label><input type="text" id="imam_subuh" placeholder="Ustadz..."></div>
-
         <div class="form-group"><label>Syuruk</label><input type="text" id="syuruk" placeholder="05:45"></div>
         <div class="form-group"></div>
-
         <div class="form-group"><label>Dzuhur</label><input type="text" id="dzuhur" placeholder="12:00"></div>
         <div class="form-group"><label>Imam Dzuhur</label><input type="text" id="imam_dzuhur" placeholder="Ustadz..."></div>
-
         <div class="form-group"><label>Ashar</label><input type="text" id="ashar" placeholder="15:15"></div>
         <div class="form-group"><label>Imam Ashar</label><input type="text" id="imam_ashar" placeholder="Ustadz..."></div>
-
         <div class="form-group"><label>Maghrib</label><input type="text" id="maghrib" placeholder="18:00"></div>
         <div class="form-group"><label>Imam Maghrib</label><input type="text" id="imam_maghrib" placeholder="Ustadz..."></div>
-
         <div class="form-group"><label>Isya</label><input type="text" id="isya" placeholder="19:10"></div>
         <div class="form-group"><label>Imam Isya</label><input type="text" id="imam_isya" placeholder="Ustadz..."></div>
     </div>
@@ -183,6 +194,9 @@
             document.getElementById('background_url_3').value = data.background_url_3 || '';
             document.getElementById('slide_interval').value = data.slide_interval || '10';
             document.getElementById('running_text').value = data.running_text || '';
+            document.getElementById('tartil_url_1').value = data.tartil_url_1 || '';
+            document.getElementById('tartil_url_2').value = data.tartil_url_2 || '';
+            document.getElementById('tartil_url_3').value = data.tartil_url_3 || '';
             
             document.getElementById('title_jadwal').value = data.title_jadwal || '';
             document.getElementById('title_info').value = data.title_info || '';
@@ -237,6 +251,9 @@
             background_url_2: document.getElementById('background_url_2').value,
             background_url_3: document.getElementById('background_url_3').value,
             slide_interval: document.getElementById('slide_interval').value,
+            tartil_url_1: document.getElementById('tartil_url_1').value,
+            tartil_url_2: document.getElementById('tartil_url_2').value,
+            tartil_url_3: document.getElementById('tartil_url_3').value,
             running_text: document.getElementById('running_text').value,
             title_jadwal: document.getElementById('title_jadwal').value,
             title_info: document.getElementById('title_info').value,
