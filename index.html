@@ -19,7 +19,7 @@
         .header-right { display: flex; gap: 10px; align-items: center; }
         .header-btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
         #sound-btn { background: #ffc107; color: black; }
-        #tartil-btn { background: #17a2b8; color: white; }
+        #tartil-btn { background: #17a2b8; color: white; min-width: 140px; }
         .main-content { flex: 1; display: flex; padding: 0 3vw; gap: 3vw; min-height: 0; }
         .left-panel { flex: 1; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
         .clock-container { position: relative; width: 25vh; height: 25vh; max-width: 220px; max-height: 220px; margin-bottom: 3vh; flex-shrink: 0; }
@@ -118,9 +118,6 @@
         <p id="adzan-subtitle">Silakan segera menuju Masjid</p>
     </div>
 
-    <!-- TAG AUDIO NATIVE UNTUK TARTIL (Tidak pakai src default) -->
-    <audio id="tartil-audio" preload="auto"></audio>
-
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyC4CQMl5l1n1voweOgQouMD1kJcpHs-esU",
@@ -137,18 +134,16 @@
         let iqomahCountdownInterval = null;
         let isTartilPlaying = false;
 
-        // Adzan tetap pakai file lokal dari GitHub (ukuran kecil pasti aman)
         const adzanSubuhAudio = new Audio('adzan-subuh.mp3');
         const adzanBiasaAudio = new Audio('adzan-biasa.mp3');
         
         // --- SETTING TARTIL PAKAI LINK ARCHIVE.ORG ---
         // Ganti link di dalam array ini dengan link Archive.org kamu.
-        // Contoh: 'https://archive.org/download/20230913/001_al_fatiha.mp3'
         let tartilUrls = [
             'https://archive.org/download/20230913/001_al_fatiha.mp3'
         ];
         let currentTartil = 0;
-        const tartilAudio = document.getElementById('tartil-audio');
+        const tartilAudio = new Audio();
         
         tartilAudio.onended = () => {
             currentTartil++;
@@ -156,7 +151,7 @@
                 tartilAudio.src = tartilUrls[currentTartil];
                 tartilAudio.play().catch(e => console.log("Error next track:", e));
             } else {
-                currentTartil = 0; // Kembali ke surah pertama
+                currentTartil = 0; 
                 tartilAudio.src = tartilUrls[0];
                 tartilAudio.play().catch(e => console.log("Error loop track:", e));
             }
@@ -169,16 +164,25 @@
                 tartilAudio.pause();
                 isTartilPlaying = false;
                 document.getElementById('tartil-btn').style.background = '#17a2b8';
+                document.getElementById('tartil-btn').innerText = '🎵 Tartil';
             } else {
-                tartilAudio.src = tartilUrls[currentTartil];
+                // Cek apakah src sudah benar, jika belum set ulang
+                if (!tartilAudio.src.includes(tartilUrls[currentTartil])) {
+                    tartilAudio.src = tartilUrls[currentTartil];
+                }
+                
                 let playPromise = tartilAudio.play();
                 
                 if (playPromise !== undefined) {
                     playPromise.then(_ => {
                         isTartilPlaying = true;
                         document.getElementById('tartil-btn').style.background = '#28a745';
+                        document.getElementById('tartil-btn').innerText = '⏸️ Stop Tartil';
                     }).catch(error => {
-                        alert("GAGAL MEMUTAR!\nPastikan link MP3 dari Archive.org sudah benar.\n\nDetail Error: " + error.message);
+                        // Abaikan error AbortError (terjadi jika tombol diklik terlalu cepat saat loading)
+                        if (error.name !== 'AbortError') {
+                            alert("GAGAL MEMUTAR!\nPastikan link MP3 dari Archive.org benar dan internet stabil.\n\nDetail Error: " + error.message);
+                        }
                     });
                 }
             }
@@ -191,7 +195,12 @@
         }
 
         function showAdzanOverlay(namaSholat) {
-            if (isTartilPlaying) { tartilAudio.pause(); isTartilPlaying = false; document.getElementById('tartil-btn').style.background = '#17a2b8'; }
+            if (isTartilPlaying) { 
+                tartilAudio.pause(); 
+                isTartilPlaying = false; 
+                document.getElementById('tartil-btn').style.background = '#17a2b8';
+                document.getElementById('tartil-btn').innerText = '🎵 Tartil';
+            }
             document.getElementById('adzan-prayer-name').innerText = namaSholat;
             document.getElementById('adzan-title').innerText = "WAKTUNYA SHOLAT";
             document.getElementById('adzan-subtitle').innerText = "Silakan segera menuju Masjid";
