@@ -6,6 +6,7 @@
     <title>Panel Kontrol Masjid</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; color: #333; }
         .container { max-width: 500px; margin: auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
@@ -22,6 +23,10 @@
         .color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .color-item { display: flex; flex-direction: column; }
         input[type="color"] { width: 100%; height: 45px; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; padding: 2px; background: #fff; }
+        .upload-box { background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px dashed #ccc; margin-bottom: 10px; }
+        .upload-btn { background: #17a2b8; color: white; padding: 10px; width: 100%; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; text-align: center; }
+        .upload-status { font-size: 12px; color: #888; margin-top: 5px; }
+        .info-text { font-size: 12px; color: #888; background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
@@ -34,39 +39,34 @@
         <input type="text" id="nama_masjid" placeholder="Masjid Al-Hikmah">
     </div>
 
-    <div class="form-group">
-        <label>Link Wallpaper 1</label>
-        <input type="url" id="background_url_1" placeholder="https://example.com/foto1.jpg">
+    <div class="upload-box">
+        <label>Upload Wallpaper 1</label>
+        <input type="file" id="file_bg1" accept="image/*" style="display:none;">
+        <div class="upload-btn" onclick="document.getElementById('file_bg1').click()">📁 Pilih Foto dari HP</div>
+        <div class="upload-status" id="status_bg1">Belum ada foto dipilih</div>
     </div>
-    <div class="form-group">
-        <label>Link Wallpaper 2</label>
-        <input type="url" id="background_url_2" placeholder="https://example.com/foto2.jpg">
+    <div class="upload-box">
+        <label>Upload Wallpaper 2</label>
+        <input type="file" id="file_bg2" accept="image/*" style="display:none;">
+        <div class="upload-btn" onclick="document.getElementById('file_bg2').click()">📁 Pilih Foto dari HP</div>
+        <div class="upload-status" id="status_bg2">Belum ada foto dipilih</div>
     </div>
-    <div class="form-group">
-        <label>Link Wallpaper 3</label>
-        <input type="url" id="background_url_3" placeholder="https://example.com/foto3.jpg">
+    <div class="upload-box">
+        <label>Upload Wallpaper 3</label>
+        <input type="file" id="file_bg3" accept="image/*" style="display:none;">
+        <div class="upload-btn" onclick="document.getElementById('file_bg3').click()">📁 Pilih Foto dari HP</div>
+        <div class="upload-status" id="status_bg3">Belum ada foto dipilih</div>
     </div>
+
+    <div class="info-text">
+        <strong>ℹ️ INFO UPLOAD MP3:</strong><br>
+        - Murattal: Upload MP3 ke GitHub dengan nama <b>tartil1.mp3</b>, <b>tartil2.mp3</b>, <b>tartil3.mp3</b>.<br>
+        - Adzan: Upload MP3 ke GitHub dengan nama <b>adzan-subuh.mp3</b> & <b>adzan-biasa.mp3</b>.
+    </div>
+
     <div class="form-group">
         <label>Kecepatan Slide Wallpaper (Detik)</label>
         <input type="number" id="slide_interval" placeholder="10" min="3" max="120">
-    </div>
-
-    <hr>
-
-    <!-- TAMBAHAN: LINK TARTIL MP3 -->
-    <h2>🎵 LINK MP3 MURATTAL (TARTIL)</h2>
-    <p style="font-size: 12px; color: #888; margin-bottom: 15px;">Cari file MP3 di internet, copy link-nya, paste di sini. (Contoh: link dari Archive.org).</p>
-    <div class="form-group">
-        <label>Link Murattal 1</label>
-        <input type="url" id="tartil_url_1" placeholder="https://archive.org/.../surah1.mp3">
-    </div>
-    <div class="form-group">
-        <label>Link Murattal 2</label>
-        <input type="url" id="tartil_url_2" placeholder="https://archive.org/.../surah2.mp3">
-    </div>
-    <div class="form-group">
-        <label>Link Murattal 3</label>
-        <input type="url" id="tartil_url_3" placeholder="https://archive.org/.../surah3.mp3">
     </div>
 
     <div class="form-group">
@@ -180,24 +180,55 @@
 <script>
     const firebaseConfig = {
         apiKey: "AIzaSyC4CQMl5l1n1voweOgQouMD1kJcpHs-esU",
-        databaseURL: "https://gps-tracher-default-rtdb.firebaseio.com"
+        databaseURL: "https://gps-tracher-default-rtdb.firebaseio.com",
+        storageBucket: "gs://gps-tracher.appspot.com"
     };
     firebase.initializeApp(firebaseConfig);
     const dbRef = firebase.database().ref('masjid');
+    const storageRef = firebase.storage().ref();
+
+    // FUNGSI UPLOAD OVERWRITE (Biar memori tidak penuh)
+    function handleFileUpload(fileInputId, statusId, dbKey) {
+        const fileInput = document.getElementById(fileInputId);
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const statusEl = document.getElementById(statusId);
+            statusEl.innerText = "Uploading... 0%";
+            
+            // Paksa nama file selalu sama (misal: wallpapers/bg1.jpg) agar menimpa file lama
+            const fileName = 'wallpapers/' + dbKey + '.jpg';
+            const uploadTask = storageRef.child(fileName).put(file);
+
+            uploadTask.on('state_changed',
+                (snapshot) => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    statusEl.innerText = "Uploading... " + Math.round(progress) + "%";
+                },
+                (error) => {
+                    statusEl.innerText = "❌ Gagal: " + error.message;
+                },
+                () => {
+                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                        dbRef.child(dbKey).set(downloadURL);
+                        statusEl.innerText = "✅ Berhasil diupload & menimpa foto lama!";
+                    });
+                }
+            );
+        });
+    }
+
+    handleFileUpload('file_bg1', 'status_bg1', 'background_url_1');
+    handleFileUpload('file_bg2', 'status_bg2', 'background_url_2');
+    handleFileUpload('file_bg3', 'status_bg3', 'background_url_3');
 
     dbRef.once('value').then((snapshot) => {
         const data = snapshot.val();
         if(data) {
             document.getElementById('nama_masjid').value = data.nama_masjid || '';
-            document.getElementById('background_url_1').value = data.background_url_1 || '';
-            document.getElementById('background_url_2').value = data.background_url_2 || '';
-            document.getElementById('background_url_3').value = data.background_url_3 || '';
             document.getElementById('slide_interval').value = data.slide_interval || '10';
             document.getElementById('running_text').value = data.running_text || '';
-            document.getElementById('tartil_url_1').value = data.tartil_url_1 || '';
-            document.getElementById('tartil_url_2').value = data.tartil_url_2 || '';
-            document.getElementById('tartil_url_3').value = data.tartil_url_3 || '';
-            
             document.getElementById('title_jadwal').value = data.title_jadwal || '';
             document.getElementById('title_info').value = data.title_info || '';
             document.getElementById('title_kas').value = data.title_kas || '';
@@ -247,13 +278,7 @@
     function simpanUtama() {
         dbRef.update({
             nama_masjid: document.getElementById('nama_masjid').value,
-            background_url_1: document.getElementById('background_url_1').value,
-            background_url_2: document.getElementById('background_url_2').value,
-            background_url_3: document.getElementById('background_url_3').value,
             slide_interval: document.getElementById('slide_interval').value,
-            tartil_url_1: document.getElementById('tartil_url_1').value,
-            tartil_url_2: document.getElementById('tartil_url_2').value,
-            tartil_url_3: document.getElementById('tartil_url_3').value,
             running_text: document.getElementById('running_text').value,
             title_jadwal: document.getElementById('title_jadwal').value,
             title_info: document.getElementById('title_info').value,
