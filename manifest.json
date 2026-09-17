@@ -1,0 +1,15 @@
+{
+  "name": "Info Masjid Digital",
+  "short_name": "Info Masjid",
+  "start_url": "/",
+  "display": "fullscreen",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/dmuhi9959/masjid-assyuhada/main/bg1.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
