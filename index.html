@@ -189,16 +189,31 @@
         function showWarningOverlay(namaSholat) {
             document.getElementById('warning-prayer-name').innerText = namaSholat;
             document.getElementById('warning-overlay').style.display = 'flex';
+            
+            // --- MAINKAN TARTIL OTOMATIS SAAT PERINGATAN 2 MENIT ---
+            if (isSoundActive && !isTartilPlaying) {
+                tartilAudio.src = tartilUrls[currentTartil];
+                tartilAudio.play().then(function(_) {
+                    isTartilPlaying = true;
+                    document.getElementById('tartil-btn').style.background = '#28a745';
+                    document.getElementById('tartil-btn').innerText = '⏸️ Stop Tartil';
+                }).catch(function(e) {
+                    console.log("Autoplay tartil diblokir: ", e);
+                });
+            }
+            
             setTimeout(function() { document.getElementById('warning-overlay').style.display = 'none'; }, 15000);
         }
 
         function showAdzanOverlay(namaSholat) {
+            // Hentikan Tartil saat Adzan berkumandang
             if (isTartilPlaying) { 
                 tartilAudio.pause(); 
                 isTartilPlaying = false; 
                 document.getElementById('tartil-btn').style.background = '#17a2b8';
                 document.getElementById('tartil-btn').innerText = '🎵 Tartil';
             }
+            
             document.getElementById('adzan-prayer-name').innerText = namaSholat;
             document.getElementById('adzan-title').innerText = "WAKTUNYA SHOLAT";
             document.getElementById('adzan-subtitle').innerText = "Silakan segera menuju Masjid";
