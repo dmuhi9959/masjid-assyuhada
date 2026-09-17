@@ -118,6 +118,9 @@
         <p id="adzan-subtitle">Silakan segera menuju Masjid</p>
     </div>
 
+    <!-- TAG AUDIO NATIVE UNTUK TARTIL -->
+    <audio id="tartil-audio" preload="auto"></audio>
+
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyC4CQMl5l1n1voweOgQouMD1kJcpHs-esU",
@@ -137,14 +140,15 @@
         const adzanSubuhAudio = new Audio('adzan-subuh.mp3');
         const adzanBiasaAudio = new Audio('adzan-biasa.mp3');
         
-        // --- SETTING TARTIL PAKAI LINK ARCHIVE.ORG ---
+        // --- SETTING TARTIL PAKAI LINK MP3QURAN.NET (Server Resmi & Stabil) ---
+        // Suara Syeikh Mishary Rashid Alafasy
         let tartilUrls = [
-            'https://archive.org/download/MurottaldanTerjemahanAlQuran-SyeikhAlGhomidi/%E2%99%AA+001+~+Al+Fatihah.mp3',
-            'https://archive.org/download/MurottaldanTerjemahanAlQuran-SyeikhAlGhomidi/%E2%99%AA+002+~+Al+Baqarah.mp3',
-            'https://archive.org/download/MurottaldanTerjemahanAlQuran-SyeikhAlGhomidi/%E2%99%AA+003+~+Al+Imran.mp3'
+            'https://server8.mp3quran.net/afs/001.mp3', // Al-Fatihah
+            'https://server8.mp3quran.net/afs/002.mp3', // Al-Baqarah
+            'https://server8.mp3quran.net/afs/003.mp3'  // Ali Imran
         ];
         let currentTartil = 0;
-        const tartilAudio = new Audio();
+        const tartilAudio = document.getElementById('tartil-audio');
         
         tartilAudio.onended = () => {
             currentTartil++;
@@ -167,7 +171,8 @@
                 document.getElementById('tartil-btn').style.background = '#17a2b8';
                 document.getElementById('tartil-btn').innerText = '🎵 Tartil';
             } else {
-                if (!tartilAudio.src.includes(tartilUrls[currentTartil])) {
+                // Set src hanya jika belum di-set atau berbeda
+                if (!tartilAudio.src || !tartilAudio.src.includes(tartilUrls[currentTartil])) {
                     tartilAudio.src = tartilUrls[currentTartil];
                 }
                 
@@ -180,7 +185,7 @@
                         document.getElementById('tartil-btn').innerText = '⏸️ Stop Tartil';
                     }).catch(error => {
                         if (error.name !== 'AbortError') {
-                            alert("GAGAL MEMUTAR!\nPastikan link MP3 dari Archive.org benar dan internet stabil.\n\nDetail Error: " + error.message);
+                            alert("GAGAL MEMUTAR!\nPastikan internet TV stabil.\n\nDetail Error: " + error.message);
                         }
                     });
                 }
@@ -268,7 +273,7 @@
         dbRef.child('warna_imam').on('value', s => { let val = s.val() || "#00e5ff"; document.querySelectorAll('.p-imam').forEach(el => el.style.color = val); });
         dbRef.child('warna_info').on('value', s => { let val = s.val() || "#ffffff"; document.querySelectorAll('.info-list').forEach(el => el.style.color = val); });
         dbRef.child('warna_title_info').on('value', s => document.getElementById('title-info').style.color = s.val() || "#ffc107");
-        dbRef.child('warna_title_kas').on('value', s => document.getElementById('title-kas').style.color = s.val() || "#ffc107");
+        dbRef.child('warna_title_kas').on('value', s => document.getElementById('title-kas').style.color = s.val() || "#ffc107";
         dbRef.child('warna_running_text').on('value', s => document.getElementById('running-text').style.color = s.val() || "#ffffff");
         dbRef.child('warna_bg_imsak').on('value', s => document.getElementById('bg-imsak').style.backgroundColor = s.val() || "transparent");
         dbRef.child('warna_bg_subuh').on('value', s => document.getElementById('bg-subuh').style.backgroundColor = s.val() || "transparent");
