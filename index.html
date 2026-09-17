@@ -118,9 +118,6 @@
         <p id="adzan-subtitle">Silakan segera menuju Masjid</p>
     </div>
 
-    <!-- TAG AUDIO NATIVE UNTUK TARTIL -->
-    <audio id="tartil-audio" preload="auto"></audio>
-
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyC4CQMl5l1n1voweOgQouMD1kJcpHs-esU",
@@ -140,29 +137,30 @@
         const adzanSubuhAudio = new Audio('adzan-subuh.mp3');
         const adzanBiasaAudio = new Audio('adzan-biasa.mp3');
         
-        // --- SETTING TARTIL PAKAI LINK MP3QURAN.NET (Server Resmi & Stabil) ---
-        // Suara Syeikh Mishary Rashid Alafasy
         let tartilUrls = [
-            'https://server8.mp3quran.net/afs/001.mp3', // Al-Fatihah
-            'https://server8.mp3quran.net/afs/002.mp3', // Al-Baqarah
-            'https://server8.mp3quran.net/afs/003.mp3'  // Ali Imran
+            'https://server8.mp3quran.net/afs/001.mp3',
+            'https://server8.mp3quran.net/afs/002.mp3',
+            'https://server8.mp3quran.net/afs/003.mp3'
         ];
         let currentTartil = 0;
-        const tartilAudio = document.getElementById('tartil-audio');
+        const tartilAudio = new Audio();
         
-        tartilAudio.onended = () => {
+        tartilAudio.onended = function() {
             currentTartil++;
-            if (currentTartil < tartilUrls.length && tartilUrls[currentTartil]) {
+            if (currentTartil < tartilUrls.length) {
                 tartilAudio.src = tartilUrls[currentTartil];
-                tartilAudio.play().catch(e => console.log("Error next track:", e));
+                tartilAudio.play().catch(function(e){ console.log(e); });
             } else {
                 currentTartil = 0; 
                 tartilAudio.src = tartilUrls[0];
-                tartilAudio.play().catch(e => console.log("Error loop track:", e));
+                tartilAudio.play().catch(function(e){ console.log(e); });
             }
         };
 
-        function aktifkanSuaraAdzan() { isSoundActive = true; document.getElementById('sound-btn').style.display = 'none'; }
+        function aktifkanSuaraAdzan() { 
+            isSoundActive = true; 
+            document.getElementById('sound-btn').style.display = 'none'; 
+        }
 
         function toggleTartil() {
             if (isTartilPlaying) {
@@ -171,21 +169,17 @@
                 document.getElementById('tartil-btn').style.background = '#17a2b8';
                 document.getElementById('tartil-btn').innerText = '🎵 Tartil';
             } else {
-                // Set src hanya jika belum di-set atau berbeda
-                if (!tartilAudio.src || !tartilAudio.src.includes(tartilUrls[currentTartil])) {
-                    tartilAudio.src = tartilUrls[currentTartil];
-                }
-                
+                tartilAudio.src = tartilUrls[currentTartil];
                 let playPromise = tartilAudio.play();
                 
                 if (playPromise !== undefined) {
-                    playPromise.then(_ => {
+                    playPromise.then(function(_) {
                         isTartilPlaying = true;
                         document.getElementById('tartil-btn').style.background = '#28a745';
                         document.getElementById('tartil-btn').innerText = '⏸️ Stop Tartil';
-                    }).catch(error => {
+                    }).catch(function(error) {
                         if (error.name !== 'AbortError') {
-                            alert("GAGAL MEMUTAR!\nPastikan internet TV stabil.\n\nDetail Error: " + error.message);
+                            alert("GAGAL MEMUTAR! Pastikan internet TV stabil. Detail: " + error.message);
                         }
                     });
                 }
@@ -195,7 +189,7 @@
         function showWarningOverlay(namaSholat) {
             document.getElementById('warning-prayer-name').innerText = namaSholat;
             document.getElementById('warning-overlay').style.display = 'flex';
-            setTimeout(() => { document.getElementById('warning-overlay').style.display = 'none'; }, 15000);
+            setTimeout(function() { document.getElementById('warning-overlay').style.display = 'none'; }, 15000);
         }
 
         function showAdzanOverlay(namaSholat) {
@@ -210,7 +204,7 @@
             document.getElementById('adzan-subtitle').innerText = "Silakan segera menuju Masjid";
             document.getElementById('adzan-subtitle').style.color = "#4CAF50";
             document.getElementById('adzan-overlay').style.display = 'flex';
-            setTimeout(() => { startIqomahCountdown(namaSholat); }, 120000); 
+            setTimeout(function() { startIqomahCountdown(namaSholat); }, 120000); 
         }
 
         function startIqomahCountdown(namaSholat) {
@@ -220,109 +214,128 @@
             document.getElementById('adzan-subtitle').style.color = "#ffc107";
             let countdown = iqomahDelay * 60;
             if (iqomahCountdownInterval) clearInterval(iqomahCountdownInterval);
-            iqomahCountdownInterval = setInterval(() => {
-                let m = Math.floor(countdown / 60); let s = countdown % 60;
-                document.getElementById('adzan-subtitle').innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            iqomahCountdownInterval = setInterval(function() {
+                let m = Math.floor(countdown / 60); 
+                let s = countdown % 60;
+                document.getElementById('adzan-subtitle').innerText = String(m).padStart(2, '0') + ":" + String(s).padStart(2, '0');
                 if (countdown <= 0) {
                     clearInterval(iqomahCountdownInterval);
                     document.getElementById('adzan-subtitle').innerText = "IQOMAH";
                     document.getElementById('adzan-subtitle').style.color = "#ff0000";
-                    setTimeout(() => { document.getElementById('adzan-overlay').style.display = 'none'; }, 60000); 
+                    setTimeout(function() { document.getElementById('adzan-overlay').style.display = 'none'; }, 60000); 
                 }
                 countdown--;
             }, 1000);
         }
 
-        dbRef.child('nama_masjid').on('value', s => document.getElementById('masjid-name').innerText = s.val() || "MASJID AL-HIKMAH");
-        dbRef.child('imsak').on('value', s => document.getElementById('imsak').innerText = s.val() || "--:--");
-        dbRef.child('subuh').on('value', s => { let val = s.val() || "04:30"; document.getElementById('subuh').innerText = val; prayerTimes.subuh = val; });
-        dbRef.child('syuruk').on('value', s => document.getElementById('syuruk').innerText = s.val() || "--:--");
-        dbRef.child('dzuhur').on('value', s => { let val = s.val() || "12:00"; document.getElementById('dzuhur').innerText = val; prayerTimes.dzuhur = val; });
-        dbRef.child('ashar').on('value', s => { let val = s.val() || "15:15"; document.getElementById('ashar').innerText = val; prayerTimes.ashar = val; });
-        dbRef.child('maghrib').on('value', s => { let val = s.val() || "18:00"; document.getElementById('maghrib').innerText = val; prayerTimes.maghrib = val; });
-        dbRef.child('isya').on('value', s => { let val = s.val() || "19:10"; document.getElementById('isya').innerText = val; prayerTimes.isya = val; });
-        dbRef.child('imam_subuh').on('value', s => document.getElementById('subuh-imam').innerText = s.val() || "");
-        dbRef.child('imam_dzuhur').on('value', s => document.getElementById('dzuhur-imam').innerText = s.val() || "");
-        dbRef.child('imam_ashar').on('value', s => document.getElementById('ashar-imam').innerText = s.val() || "");
-        dbRef.child('imam_maghrib').on('value', s => document.getElementById('maghrib-imam').innerText = s.val() || "");
-        dbRef.child('imam_isya').on('value', s => document.getElementById('isya-imam').innerText = s.val() || "");
+        dbRef.child('nama_masjid').on('value', function(s){ document.getElementById('masjid-name').innerText = s.val() || "MASJID AL-HIKMAH"; });
+        dbRef.child('imsak').on('value', function(s){ document.getElementById('imsak').innerText = s.val() || "--:--"; });
+        dbRef.child('subuh').on('value', function(s){ let val = s.val() || "04:30"; document.getElementById('subuh').innerText = val; prayerTimes.subuh = val; });
+        dbRef.child('syuruk').on('value', function(s){ document.getElementById('syuruk').innerText = s.val() || "--:--"; });
+        dbRef.child('dzuhur').on('value', function(s){ let val = s.val() || "12:00"; document.getElementById('dzuhur').innerText = val; prayerTimes.dzuhur = val; });
+        dbRef.child('ashar').on('value', function(s){ let val = s.val() || "15:15"; document.getElementById('ashar').innerText = val; prayerTimes.ashar = val; });
+        dbRef.child('maghrib').on('value', function(s){ let val = s.val() || "18:00"; document.getElementById('maghrib').innerText = val; prayerTimes.maghrib = val; });
+        dbRef.child('isya').on('value', function(s){ let val = s.val() || "19:10"; document.getElementById('isya').innerText = val; prayerTimes.isya = val; });
+        dbRef.child('imam_subuh').on('value', function(s){ document.getElementById('subuh-imam').innerText = s.val() || ""; });
+        dbRef.child('imam_dzuhur').on('value', function(s){ document.getElementById('dzuhur-imam').innerText = s.val() || ""; });
+        dbRef.child('imam_ashar').on('value', function(s){ document.getElementById('ashar-imam').innerText = s.val() || ""; });
+        dbRef.child('imam_maghrib').on('value', function(s){ document.getElementById('maghrib-imam').innerText = s.val() || ""; });
+        dbRef.child('imam_isya').on('value', function(s){ document.getElementById('isya-imam').innerText = s.val() || ""; });
         
         let infoTexts = []; let currentInfo = 0; let infoIntervalMs = 10000; let lastInfoTime = Date.now();
-        dbRef.child('info_text_1').on('value', s => { infoTexts[0] = s.val(); updateInfoDisplay(); });
-        dbRef.child('info_text_2').on('value', s => { infoTexts[1] = s.val(); updateInfoDisplay(); });
-        dbRef.child('info_text_3').on('value', s => { infoTexts[2] = s.val(); updateInfoDisplay(); });
-        dbRef.child('info_interval').on('value', s => { infoIntervalMs = (s.val() || 10) * 1000; });
+        dbRef.child('info_text_1').on('value', function(s){ infoTexts[0] = s.val(); updateInfoDisplay(); });
+        dbRef.child('info_text_2').on('value', function(s){ infoTexts[1] = s.val(); updateInfoDisplay(); });
+        dbRef.child('info_text_3').on('value', function(s){ infoTexts[2] = s.val(); updateInfoDisplay(); });
+        dbRef.child('info_interval').on('value', function(s){ infoIntervalMs = (s.val() || 10) * 1000; });
         function updateInfoDisplay() {
             let validInfos = infoTexts.filter(Boolean);
             let el = document.getElementById('info-text');
             if (validInfos.length === 0) { el.innerText = "Tidak ada info terbaru."; return; }
             el.style.opacity = 0;
-            setTimeout(() => { el.innerText = validInfos[currentInfo % validInfos.length]; el.style.opacity = 1; }, 500);
+            setTimeout(function() { el.innerText = validInfos[currentInfo % validInfos.length]; el.style.opacity = 1; }, 500);
         }
 
-        dbRef.child('kas_masjid').on('value', s => document.getElementById('kas-masjid').innerText = s.val() || "Rp 0");
-        dbRef.child('running_text').on('value', s => document.getElementById('running-text').innerText = s.val() || "Selamat datang...");
-        dbRef.child('iqomah_delay').on('value', s => { iqomahDelay = parseInt(s.val()) || 10; });
-        dbRef.child('title_info').on('value', s => document.getElementById('title-info').innerText = s.val() || "ℹ️ INFO & PENGUMUMAN");
-        dbRef.child('title_kas').on('value', s => document.getElementById('title-kas').innerText = s.val() || "💰 KAS MASJID");
-        dbRef.child('warna_judul').on('value', s => document.getElementById('masjid-name').style.color = s.val() || "#ffc107");
-        dbRef.child('warna_jam').on('value', s => document.getElementById('digital-time').style.color = s.val() || "#ffffff");
-        dbRef.child('warna_tanggal').on('value', s => document.getElementById('date-info').style.color = s.val() || "#ffc107");
-        dbRef.child('warna_jadwal').on('value', s => { let val = s.val() || "#ffffff"; document.querySelectorAll('.p-name').forEach(el => el.style.color = val); });
-        dbRef.child('warna_waktu').on('value', s => { let val = s.val() || "#00ff00"; document.querySelectorAll('.p-time').forEach(el => el.style.color = val); });
-        dbRef.child('warna_imam').on('value', s => { let val = s.val() || "#00e5ff"; document.querySelectorAll('.p-imam').forEach(el => el.style.color = val); });
-        dbRef.child('warna_info').on('value', s => { let val = s.val() || "#ffffff"; document.querySelectorAll('.info-list').forEach(el => el.style.color = val); });
-        dbRef.child('warna_title_info').on('value', s => document.getElementById('title-info').style.color = s.val() || "#ffc107");
-        dbRef.child('warna_title_kas').on('value', s => document.getElementById('title-kas').style.color = s.val() || "#ffc107";
-        dbRef.child('warna_running_text').on('value', s => document.getElementById('running-text').style.color = s.val() || "#ffffff");
-        dbRef.child('warna_bg_imsak').on('value', s => document.getElementById('bg-imsak').style.backgroundColor = s.val() || "transparent");
-        dbRef.child('warna_bg_subuh').on('value', s => document.getElementById('bg-subuh').style.backgroundColor = s.val() || "transparent");
-        dbRef.child('warna_bg_syuruk').on('value', s => document.getElementById('bg-syuruk').style.backgroundColor = s.val() || "transparent");
-        dbRef.child('warna_bg_dzuhur').on('value', s => document.getElementById('bg-dzuhur').style.backgroundColor = s.val() || "transparent");
-        dbRef.child('warna_bg_ashar').on('value', s => document.getElementById('bg-ashar').style.backgroundColor = s.val() || "transparent");
-        dbRef.child('warna_bg_maghrib').on('value', s => document.getElementById('bg-maghrib').style.backgroundColor = s.val() || "transparent");
-        dbRef.child('warna_bg_isya').on('value', s => document.getElementById('bg-isya').style.backgroundColor = s.val() || "transparent");
+        dbRef.child('kas_masjid').on('value', function(s){ document.getElementById('kas-masjid').innerText = s.val() || "Rp 0"; });
+        dbRef.child('running_text').on('value', function(s){ document.getElementById('running-text').innerText = s.val() || "Selamat datang..."; });
+        dbRef.child('iqomah_delay').on('value', function(s){ iqomahDelay = parseInt(s.val()) || 10; });
+        dbRef.child('title_info').on('value', function(s){ document.getElementById('title-info').innerText = s.val() || "ℹ️ INFO & PENGUMUMAN"; });
+        dbRef.child('title_kas').on('value', function(s){ document.getElementById('title-kas').innerText = s.val() || "💰 KAS MASJID"; });
+        dbRef.child('warna_judul').on('value', function(s){ document.getElementById('masjid-name').style.color = s.val() || "#ffc107"; });
+        dbRef.child('warna_jam').on('value', function(s){ document.getElementById('digital-time').style.color = s.val() || "#ffffff"; });
+        dbRef.child('warna_tanggal').on('value', function(s){ document.getElementById('date-info').style.color = s.val() || "#ffc107"; });
+        dbRef.child('warna_jadwal').on('value', function(s){ let val = s.val() || "#ffffff"; document.querySelectorAll('.p-name').forEach(function(el){ el.style.color = val; }); });
+        dbRef.child('warna_waktu').on('value', function(s){ let val = s.val() || "#00ff00"; document.querySelectorAll('.p-time').forEach(function(el){ el.style.color = val; }); });
+        dbRef.child('warna_imam').on('value', function(s){ let val = s.val() || "#00e5ff"; document.querySelectorAll('.p-imam').forEach(function(el){ el.style.color = val; }); });
+        dbRef.child('warna_info').on('value', function(s){ let val = s.val() || "#ffffff"; document.querySelectorAll('.info-list').forEach(function(el){ el.style.color = val; }); });
+        dbRef.child('warna_title_info').on('value', function(s){ document.getElementById('title-info').style.color = s.val() || "#ffc107"; });
+        dbRef.child('warna_title_kas').on('value', function(s){ document.getElementById('title-kas').style.color = s.val() || "#ffc107"; });
+        dbRef.child('warna_running_text').on('value', function(s){ document.getElementById('running-text').style.color = s.val() || "#ffffff"; });
+        dbRef.child('warna_bg_imsak').on('value', function(s){ document.getElementById('bg-imsak').style.backgroundColor = s.val() || "transparent"; });
+        dbRef.child('warna_bg_subuh').on('value', function(s){ document.getElementById('bg-subuh').style.backgroundColor = s.val() || "transparent"; });
+        dbRef.child('warna_bg_syuruk').on('value', function(s){ document.getElementById('bg-syuruk').style.backgroundColor = s.val() || "transparent"; });
+        dbRef.child('warna_bg_dzuhur').on('value', function(s){ document.getElementById('bg-dzuhur').style.backgroundColor = s.val() || "transparent"; });
+        dbRef.child('warna_bg_ashar').on('value', function(s){ document.getElementById('bg-ashar').style.backgroundColor = s.val() || "transparent"; });
+        dbRef.child('warna_bg_maghrib').on('value', function(s){ document.getElementById('bg-maghrib').style.backgroundColor = s.val() || "transparent"; });
+        dbRef.child('warna_bg_isya').on('value', function(s){ document.getElementById('bg-isya').style.backgroundColor = s.val() || "transparent"; });
 
         let bgImages = []; let currentBg = 0; let activeBgLayer = 1; let slideIntervalMs = 10000; let lastSlideTime = Date.now();
-        dbRef.child('background_url_1').on('value', s => { bgImages[0] = s.val(); updateBgDisplay(); });
-        dbRef.child('background_url_2').on('value', s => { bgImages[1] = s.val(); updateBgDisplay(); });
-        dbRef.child('background_url_3').on('value', s => { bgImages[2] = s.val(); updateBgDisplay(); });
-        dbRef.child('slide_interval').on('value', s => { slideIntervalMs = (s.val() || 10) * 1000; });
+        dbRef.child('background_url_1').on('value', function(s){ bgImages[0] = s.val(); updateBgDisplay(); });
+        dbRef.child('background_url_2').on('value', function(s){ bgImages[1] = s.val(); updateBgDisplay(); });
+        dbRef.child('background_url_3').on('value', function(s){ bgImages[2] = s.val(); updateBgDisplay(); });
+        dbRef.child('slide_interval').on('value', function(s){ slideIntervalMs = (s.val() || 10) * 1000; });
         function updateBgDisplay() {
             let validBgs = bgImages.filter(Boolean);
             if (validBgs.length === 0) return;
             let img = validBgs[currentBg % validBgs.length];
             let activeLayer = document.getElementById('bg' + activeBgLayer);
             let inactiveLayer = document.getElementById('bg' + (activeBgLayer === 1 ? 2 : 1));
-            inactiveLayer.style.backgroundImage = `url('${img}')`;
-            inactiveLayer.style.opacity = 1; activeLayer.style.opacity = 0;
+            inactiveLayer.style.backgroundImage = "url('" + img + "')";
+            inactiveLayer.style.opacity = 1; 
+            activeLayer.style.opacity = 0;
             activeBgLayer = (activeBgLayer === 1 ? 2 : 1);
         }
 
         const clockFace = document.getElementById('clock-face');
         for(let i = 1; i <= 12; i++) {
-            const num = document.createElement('div'); num.className = 'clock-num'; num.innerText = i;
-            const angle = (i * 30) * (Math.PI / 180); const x = Math.sin(angle) * 40; const y = -Math.cos(angle) * 40; 
-            num.style.left = `calc(50% + ${x}%)`; num.style.top = `calc(50% + ${y}%)`; num.style.transform = 'translate(-50%, -50%)';
+            const num = document.createElement('div'); 
+            num.className = 'clock-num'; 
+            num.innerText = i;
+            const angle = (i * 30) * (Math.PI / 180); 
+            const x = Math.sin(angle) * 40; 
+            const y = -Math.cos(angle) * 40; 
+            num.style.left = "calc(50% + " + x + "%)"; 
+            num.style.top = "calc(50% + " + y + "%)"; 
+            num.style.transform = 'translate(-50%, -50%)';
             clockFace.appendChild(num);
         }
-        function timeToMinutes(t) { if (!t || !t.includes(':')) return -1; let parts = t.split(':'); return parseInt(parts[0]) * 60 + parseInt(parts[1]); }
+        
+        function timeToMinutes(t) { 
+            if (!t || !t.includes(':')) return -1; 
+            let parts = t.split(':'); 
+            return parseInt(parts[0]) * 60 + parseInt(parts[1]); 
+        }
 
         function updateClock() {
             const now = new Date();
-            const hours = now.getHours(); const minutes = now.getMinutes(); const seconds = now.getSeconds();
+            const hours = now.getHours(); 
+            const minutes = now.getMinutes(); 
+            const seconds = now.getSeconds();
             document.getElementById('digital-time').innerText = String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             const masehi = now.toLocaleDateString('id-ID', options);
             try {
                 const hijri = new Intl.DateTimeFormat('id-ID-u-ca-islamic', { day: 'numeric', month: 'long', year: 'numeric' }).format(now);
                 document.getElementById('date-info').innerHTML = masehi + "<br>" + hijri + " H";
-            } catch (e) { document.getElementById('date-info').innerText = masehi; }
+            } catch (e) { 
+                document.getElementById('date-info').innerText = masehi; 
+            }
 
-            const hourDeg = (hours % 12) * 30 + minutes * 0.5; const minuteDeg = minutes * 6 + seconds * 0.1; const secondDeg = seconds * 6;
-            document.getElementById('hour-hand').style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
-            document.getElementById('minute-hand').style.transform = `translateX(-50%) rotate(${minuteDeg}deg)`;
-            document.getElementById('second-hand').style.transform = `translateX(-50%) rotate(${secondDeg}deg)`;
+            const hourDeg = (hours % 12) * 30 + minutes * 0.5; 
+            const minuteDeg = minutes * 6 + seconds * 0.1; 
+            const secondDeg = seconds * 6;
+            document.getElementById('hour-hand').style.transform = "translateX(-50%) rotate(" + hourDeg + "deg)";
+            document.getElementById('minute-hand').style.transform = "translateX(-50%) rotate(" + minuteDeg + "deg)";
+            document.getElementById('second-hand').style.transform = "translateX(-50%) rotate(" + secondDeg + "deg)";
 
             if (Date.now() - lastSlideTime > slideIntervalMs) {
                 let validBgs = bgImages.filter(Boolean);
@@ -337,20 +350,37 @@
 
             let currentTimeStr = String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0');
             let nowMinutes = hours * 60 + minutes;
-            if (currentTimeStr === "00:00") { adzanPlayed = { subuh: false, dzuhur: false, ashar: false, maghrib: false, isya: false }; warningPlayed = { subuh: false, dzuhur: false, ashar: false, maghrib: false, isya: false }; }
+            if (currentTimeStr === "00:00") { 
+                adzanPlayed = { subuh: false, dzuhur: false, ashar: false, maghrib: false, isya: false }; 
+                warningPlayed = { subuh: false, dzuhur: false, ashar: false, maghrib: false, isya: false }; 
+            }
 
-            let prayers = [{name: "SUBUH", time: prayerTimes.subuh, key: "subuh"}, {name: "DZUHUR", time: prayerTimes.dzuhur, key: "dzuhur"}, {name: "ASHAR", time: prayerTimes.ashar, key: "ashar"}, {name: "MAGHRIB", time: prayerTimes.maghrib, key: "maghrib"}, {name: "ISYA", time: prayerTimes.isya, key: "isya"}];
-            prayers.forEach(p => { let pMin = timeToMinutes(p.time); if (nowMinutes === pMin - 2 && !warningPlayed[p.key]) { showWarningOverlay(p.name); warningPlayed[p.key] = true; } });
+            let prayers = [
+                {name: "SUBUH", time: prayerTimes.subuh, key: "subuh"}, 
+                {name: "DZUHUR", time: prayerTimes.dzuhur, key: "dzuhur"}, 
+                {name: "ASHAR", time: prayerTimes.ashar, key: "ashar"}, 
+                {name: "MAGHRIB", time: prayerTimes.maghrib, key: "maghrib"}, 
+                {name: "ISYA", time: prayerTimes.isya, key: "isya"}
+            ];
+            
+            prayers.forEach(function(p) { 
+                let pMin = timeToMinutes(p.time); 
+                if (nowMinutes === pMin - 2 && !warningPlayed[p.key]) { 
+                    showWarningOverlay(p.name); 
+                    warningPlayed[p.key] = true; 
+                } 
+            });
 
             if (isSoundActive) {
-                if (currentTimeStr === prayerTimes.subuh && !adzanPlayed.subuh) { adzanSubuhAudio.play().catch(e=>console.log(e)); adzanPlayed.subuh = true; showAdzanOverlay("SUBUH"); }
-                else if (currentTimeStr === prayerTimes.dzuhur && !adzanPlayed.dzuhur) { adzanBiasaAudio.play().catch(e=>console.log(e)); adzanPlayed.dzuhur = true; showAdzanOverlay("DZUHUR"); }
-                else if (currentTimeStr === prayerTimes.ashar && !adzanPlayed.ashar) { adzanBiasaAudio.play().catch(e=>console.log(e)); adzanPlayed.ashar = true; showAdzanOverlay("ASHAR"); }
-                else if (currentTimeStr === prayerTimes.maghrib && !adzanPlayed.maghrib) { adzanBiasaAudio.play().catch(e=>console.log(e)); adzanPlayed.maghrib = true; showAdzanOverlay("MAGHRIB"); }
-                else if (currentTimeStr === prayerTimes.isya && !adzanPlayed.isya) { adzanBiasaAudio.play().catch(e=>console.log(e)); adzanPlayed.isya = true; showAdzanOverlay("ISYA"); }
+                if (currentTimeStr === prayerTimes.subuh && !adzanPlayed.subuh) { adzanSubuhAudio.play().catch(function(e){ console.log(e); }); adzanPlayed.subuh = true; showAdzanOverlay("SUBUH"); }
+                else if (currentTimeStr === prayerTimes.dzuhur && !adzanPlayed.dzuhur) { adzanBiasaAudio.play().catch(function(e){ console.log(e); }); adzanPlayed.dzuhur = true; showAdzanOverlay("DZUHUR"); }
+                else if (currentTimeStr === prayerTimes.ashar && !adzanPlayed.ashar) { adzanBiasaAudio.play().catch(function(e){ console.log(e); }); adzanPlayed.ashar = true; showAdzanOverlay("ASHAR"); }
+                else if (currentTimeStr === prayerTimes.maghrib && !adzanPlayed.maghrib) { adzanBiasaAudio.play().catch(function(e){ console.log(e); }); adzanPlayed.maghrib = true; showAdzanOverlay("MAGHRIB"); }
+                else if (currentTimeStr === prayerTimes.isya && !adzanPlayed.isya) { adzanBiasaAudio.play().catch(function(e){ console.log(e); }); adzanPlayed.isya = true; showAdzanOverlay("ISYA"); }
             }
         }
-        setInterval(updateClock, 1000); updateClock();
+        setInterval(updateClock, 1000); 
+        updateClock();
     </script>
 </body>
 </html>
