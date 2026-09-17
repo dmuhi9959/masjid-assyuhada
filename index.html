@@ -118,8 +118,8 @@
         <p id="adzan-subtitle">Silakan segera menuju Masjid</p>
     </div>
 
-    <!-- TAG AUDIO NATIVE UNTUK TARTIL -->
-    <audio id="tartil-audio" src="tartil1.mp3" preload="auto"></audio>
+    <!-- TAG AUDIO NATIVE UNTUK TARTIL (Tidak pakai src default) -->
+    <audio id="tartil-audio" preload="auto"></audio>
 
     <script>
         const firebaseConfig = {
@@ -137,12 +137,18 @@
         let iqomahCountdownInterval = null;
         let isTartilPlaying = false;
 
+        // Adzan tetap pakai file lokal dari GitHub (ukuran kecil pasti aman)
         const adzanSubuhAudio = new Audio('adzan-subuh.mp3');
         const adzanBiasaAudio = new Audio('adzan-biasa.mp3');
-        const tartilAudio = document.getElementById('tartil-audio');
         
-        let tartilUrls = ['tartil1.mp3', 'tartil2.mp3', 'tartil3.mp3'];
+        // --- SETTING TARTIL PAKAI LINK ARCHIVE.ORG ---
+        // Ganti link di dalam array ini dengan link Archive.org kamu.
+        // Contoh: 'https://archive.org/download/20230913/001_al_fatiha.mp3'
+        let tartilUrls = [
+            'https://archive.org/download/20230913/001_al_fatiha.mp3'
+        ];
         let currentTartil = 0;
+        const tartilAudio = document.getElementById('tartil-audio');
         
         tartilAudio.onended = () => {
             currentTartil++;
@@ -150,7 +156,7 @@
                 tartilAudio.src = tartilUrls[currentTartil];
                 tartilAudio.play().catch(e => console.log("Error next track:", e));
             } else {
-                currentTartil = 0;
+                currentTartil = 0; // Kembali ke surah pertama
                 tartilAudio.src = tartilUrls[0];
                 tartilAudio.play().catch(e => console.log("Error loop track:", e));
             }
@@ -172,7 +178,7 @@
                         isTartilPlaying = true;
                         document.getElementById('tartil-btn').style.background = '#28a745';
                     }).catch(error => {
-                        alert("GAGAL MEMUTAR!\nPastikan file tartil1.mp3 sudah di-upload ke GitHub dan berformat MP3 asli.\n\nDetail Error Browser: " + error.message);
+                        alert("GAGAL MEMUTAR!\nPastikan link MP3 dari Archive.org sudah benar.\n\nDetail Error: " + error.message);
                     });
                 }
             }
