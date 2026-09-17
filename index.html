@@ -138,9 +138,10 @@
         const adzanBiasaAudio = new Audio('adzan-biasa.mp3');
         
         // --- SETTING TARTIL PAKAI LINK ARCHIVE.ORG ---
-        // Ganti link di dalam array ini dengan link Archive.org kamu.
         let tartilUrls = [
-            'https://archive.org/download/20230913/001_al_fatiha.mp3'
+            'https://archive.org/download/MurottaldanTerjemahanAlQuran-SyeikhAlGhomidi/%E2%99%AA+001+~+Al+Fatihah.mp3',
+            'https://archive.org/download/MurottaldanTerjemahanAlQuran-SyeikhAlGhomidi/%E2%99%AA+002+~+Al+Baqarah.mp3',
+            'https://archive.org/download/MurottaldanTerjemahanAlQuran-SyeikhAlGhomidi/%E2%99%AA+003+~+Al+Imran.mp3'
         ];
         let currentTartil = 0;
         const tartilAudio = new Audio();
@@ -166,7 +167,6 @@
                 document.getElementById('tartil-btn').style.background = '#17a2b8';
                 document.getElementById('tartil-btn').innerText = '🎵 Tartil';
             } else {
-                // Cek apakah src sudah benar, jika belum set ulang
                 if (!tartilAudio.src.includes(tartilUrls[currentTartil])) {
                     tartilAudio.src = tartilUrls[currentTartil];
                 }
@@ -179,7 +179,6 @@
                         document.getElementById('tartil-btn').style.background = '#28a745';
                         document.getElementById('tartil-btn').innerText = '⏸️ Stop Tartil';
                     }).catch(error => {
-                        // Abaikan error AbortError (terjadi jika tombol diklik terlalu cepat saat loading)
                         if (error.name !== 'AbortError') {
                             alert("GAGAL MEMUTAR!\nPastikan link MP3 dari Archive.org benar dan internet stabil.\n\nDetail Error: " + error.message);
                         }
