@@ -16,7 +16,7 @@
         .glass-panel { background: transparent !important; backdrop-filter: none !important; border: none !important; box-shadow: none !important; }
         header { padding: 1.5vh 3vw; text-align: left; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
         header h1 { margin: 0; color: #ffc107; font-size: clamp(1.5rem, 4vh, 3rem); text-shadow: 3px 3px 6px #000, -2px -2px 6px #000, 0 0 15px #000; }
-        .header-right { display: flex; gap: 10px; }
+        .header-right { display: flex; gap: 10px; align-items: center; }
         .header-btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
         #sound-btn { background: #ffc107; color: black; }
         #tartil-btn { background: #17a2b8; color: white; }
@@ -118,6 +118,9 @@
         <p id="adzan-subtitle">Silakan segera menuju Masjid</p>
     </div>
 
+    <!-- TAG AUDIO NATIVE UNTUK TARTIL -->
+    <audio id="tartil-audio" src="tartil1.mp3" preload="auto"></audio>
+
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyC4CQMl5l1n1voweOgQouMD1kJcpHs-esU",
@@ -136,42 +139,42 @@
 
         const adzanSubuhAudio = new Audio('adzan-subuh.mp3');
         const adzanBiasaAudio = new Audio('adzan-biasa.mp3');
-        const tartilAudio = new Audio();
+        const tartilAudio = document.getElementById('tartil-audio');
         
-        // SISTEM PLAYLIST TARTIL
-        let tartilUrls = [];
+        let tartilUrls = ['tartil1.mp3', 'tartil2.mp3', 'tartil3.mp3'];
         let currentTartil = 0;
+        
         tartilAudio.onended = () => {
             currentTartil++;
-            if (currentTartil < tartilUrls.length) {
+            if (currentTartil < tartilUrls.length && tartilUrls[currentTartil]) {
                 tartilAudio.src = tartilUrls[currentTartil];
-                tartilAudio.play();
+                tartilAudio.play().catch(e => console.log("Error next track:", e));
             } else {
-                currentTartil = 0; // Ulang dari awal
+                currentTartil = 0;
                 tartilAudio.src = tartilUrls[0];
-                tartilAudio.play();
+                tartilAudio.play().catch(e => console.log("Error loop track:", e));
             }
         };
 
-        function aktifkanSuaraAdzan() {
-            isSoundActive = true;
-            document.getElementById('sound-btn').style.display = 'none';
-        }
+        function aktifkanSuaraAdzan() { isSoundActive = true; document.getElementById('sound-btn').style.display = 'none'; }
 
         function toggleTartil() {
-            if (tartilUrls.length === 0) {
-                alert("Link Murattal belum diisi di Panel Admin HP.");
-                return;
-            }
             if (isTartilPlaying) {
                 tartilAudio.pause();
                 isTartilPlaying = false;
                 document.getElementById('tartil-btn').style.background = '#17a2b8';
             } else {
                 tartilAudio.src = tartilUrls[currentTartil];
-                tartilAudio.play().catch(e => alert("Gagal memutar. Pastikan link MP3 valid."));
-                isTartilPlaying = true;
-                document.getElementById('tartil-btn').style.background = '#28a745';
+                let playPromise = tartilAudio.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(_ => {
+                        isTartilPlaying = true;
+                        document.getElementById('tartil-btn').style.background = '#28a745';
+                    }).catch(error => {
+                        alert("GAGAL MEMUTAR!\nPastikan file tartil1.mp3 sudah di-upload ke GitHub dan berformat MP3 asli.\n\nDetail Error Browser: " + error.message);
+                    });
+                }
             }
         }
 
@@ -182,11 +185,7 @@
         }
 
         function showAdzanOverlay(namaSholat) {
-            if (isTartilPlaying) {
-                tartilAudio.pause();
-                isTartilPlaying = false;
-                document.getElementById('tartil-btn').style.background = '#17a2b8';
-            }
+            if (isTartilPlaying) { tartilAudio.pause(); isTartilPlaying = false; document.getElementById('tartil-btn').style.background = '#17a2b8'; }
             document.getElementById('adzan-prayer-name').innerText = namaSholat;
             document.getElementById('adzan-title').innerText = "WAKTUNYA SHOLAT";
             document.getElementById('adzan-subtitle').innerText = "Silakan segera menuju Masjid";
@@ -203,8 +202,7 @@
             let countdown = iqomahDelay * 60;
             if (iqomahCountdownInterval) clearInterval(iqomahCountdownInterval);
             iqomahCountdownInterval = setInterval(() => {
-                let m = Math.floor(countdown / 60);
-                let s = countdown % 60;
+                let m = Math.floor(countdown / 60); let s = countdown % 60;
                 document.getElementById('adzan-subtitle').innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
                 if (countdown <= 0) {
                     clearInterval(iqomahCountdownInterval);
@@ -230,10 +228,7 @@
         dbRef.child('imam_maghrib').on('value', s => document.getElementById('maghrib-imam').innerText = s.val() || "");
         dbRef.child('imam_isya').on('value', s => document.getElementById('isya-imam').innerText = s.val() || "");
         
-        let infoTexts = [];
-        let currentInfo = 0;
-        let infoIntervalMs = 10000;
-        let lastInfoTime = Date.now();
+        let infoTexts = []; let currentInfo = 0; let infoIntervalMs = 10000; let lastInfoTime = Date.now();
         dbRef.child('info_text_1').on('value', s => { infoTexts[0] = s.val(); updateInfoDisplay(); });
         dbRef.child('info_text_2').on('value', s => { infoTexts[1] = s.val(); updateInfoDisplay(); });
         dbRef.child('info_text_3').on('value', s => { infoTexts[2] = s.val(); updateInfoDisplay(); });
@@ -285,22 +280,13 @@
             activeBgLayer = (activeBgLayer === 1 ? 2 : 1);
         }
 
-        // Baca Link Tartil dari Firebase
-        dbRef.child('tartil_url_1').on('value', s => { tartilUrls[0] = s.val(); });
-        dbRef.child('tartil_url_2').on('value', s => { tartilUrls[1] = s.val(); });
-        dbRef.child('tartil_url_3').on('value', s => { tartilUrls[2] = s.val(); });
-
         const clockFace = document.getElementById('clock-face');
         for(let i = 1; i <= 12; i++) {
-            const num = document.createElement('div');
-            num.className = 'clock-num';
-            num.innerText = i;
-            const angle = (i * 30) * (Math.PI / 180); 
-            const x = Math.sin(angle) * 40; const y = -Math.cos(angle) * 40; 
+            const num = document.createElement('div'); num.className = 'clock-num'; num.innerText = i;
+            const angle = (i * 30) * (Math.PI / 180); const x = Math.sin(angle) * 40; const y = -Math.cos(angle) * 40; 
             num.style.left = `calc(50% + ${x}%)`; num.style.top = `calc(50% + ${y}%)`; num.style.transform = 'translate(-50%, -50%)';
             clockFace.appendChild(num);
         }
-
         function timeToMinutes(t) { if (!t || !t.includes(':')) return -1; let parts = t.split(':'); return parseInt(parts[0]) * 60 + parseInt(parts[1]); }
 
         function updateClock() {
@@ -332,16 +318,10 @@
 
             let currentTimeStr = String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0');
             let nowMinutes = hours * 60 + minutes;
-            if (currentTimeStr === "00:00") {
-                adzanPlayed = { subuh: false, dzuhur: false, ashar: false, maghrib: false, isya: false };
-                warningPlayed = { subuh: false, dzuhur: false, ashar: false, maghrib: false, isya: false };
-            }
+            if (currentTimeStr === "00:00") { adzanPlayed = { subuh: false, dzuhur: false, ashar: false, maghrib: false, isya: false }; warningPlayed = { subuh: false, dzuhur: false, ashar: false, maghrib: false, isya: false }; }
 
             let prayers = [{name: "SUBUH", time: prayerTimes.subuh, key: "subuh"}, {name: "DZUHUR", time: prayerTimes.dzuhur, key: "dzuhur"}, {name: "ASHAR", time: prayerTimes.ashar, key: "ashar"}, {name: "MAGHRIB", time: prayerTimes.maghrib, key: "maghrib"}, {name: "ISYA", time: prayerTimes.isya, key: "isya"}];
-            prayers.forEach(p => {
-                let pMin = timeToMinutes(p.time);
-                if (nowMinutes === pMin - 2 && !warningPlayed[p.key]) { showWarningOverlay(p.name); warningPlayed[p.key] = true; }
-            });
+            prayers.forEach(p => { let pMin = timeToMinutes(p.time); if (nowMinutes === pMin - 2 && !warningPlayed[p.key]) { showWarningOverlay(p.name); warningPlayed[p.key] = true; } });
 
             if (isSoundActive) {
                 if (currentTimeStr === prayerTimes.subuh && !adzanPlayed.subuh) { adzanSubuhAudio.play().catch(e=>console.log(e)); adzanPlayed.subuh = true; showAdzanOverlay("SUBUH"); }
@@ -351,8 +331,7 @@
                 else if (currentTimeStr === prayerTimes.isya && !adzanPlayed.isya) { adzanBiasaAudio.play().catch(e=>console.log(e)); adzanPlayed.isya = true; showAdzanOverlay("ISYA"); }
             }
         }
-        setInterval(updateClock, 1000);
-        updateClock();
+        setInterval(updateClock, 1000); updateClock();
     </script>
 </body>
 </html>
