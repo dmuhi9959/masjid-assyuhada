@@ -2,19 +2,21 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="orientation" content="landscape">
     <link rel="manifest" href="manifest.json">
     <title>Info Masjid Digital</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        body {
+        html, body {
             margin: 0; padding: 0; color: #fff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex; flex-direction: column; height: 100vh; overflow: hidden; background-color: #000;
+            display: flex; flex-direction: column; height: 100vh; height: 100dvh; overflow: hidden; background-color: #000;
         }
-        .bg-layer { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-size: cover; background-position: center; z-index: -1; opacity: 0; transition: opacity 2s ease-in-out; }
+        body::-webkit-scrollbar { display: none; }
+        body { -ms-overflow-style: none; scrollbar-width: none; }
+        .bg-layer { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; background-size: cover; background-position: center; z-index: -1; opacity: 0; transition: opacity 2s ease-in-out; }
         .glass-panel { background: transparent !important; backdrop-filter: none !important; border: none !important; box-shadow: none !important; }
         header { padding: 1.5vh 3vw; text-align: left; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
         header h1 { margin: 0; color: #ffc107; font-size: clamp(1.5rem, 4vh, 3rem); text-shadow: 3px 3px 6px #000, -2px -2px 6px #000, 0 0 15px #000; }
@@ -48,32 +50,21 @@
         .minute { width: 4px; height: 40%; margin-top: -40%; background: #00ff00; }
         .second { width: 2px; height: 45%; margin-top: -45%; background: red; }
         .center-dot { position: absolute; top: 50%; left: 50%; width: 12px; height: 12px; background: #ffc107; border-radius: 50%; transform: translate(-50%, -50%); z-index: 11; }
-        #warning-overlay, #adzan-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.95); z-index: 9998; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        #warning-overlay, #adzan-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; background: rgba(0,0,0,0.95); z-index: 9998; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
         #adzan-overlay { background: rgba(0,0,0,0.98); z-index: 9999; }
         #warning-overlay h2, #adzan-overlay h2 { font-size: clamp(1.5rem, 5vh, 3rem); color: #ffc107; margin: 0; letter-spacing: 2px; }
         #warning-overlay h1, #adzan-overlay h1 { font-size: clamp(2.5rem, 10vh, 6rem); color: #ffffff; margin: 20px 0; text-shadow: 0 0 20px #ffc107; text-transform: uppercase; }
         #warning-overlay p, #adzan-overlay p { font-size: clamp(1rem, 3vh, 2rem); color: #ccc; margin: 0; transition: color 0.5s; }
-        
-        /* Mode tegak (portrait) menumpuk ke bawah */
-        @media (max-width: 480px) and (orientation: portrait) {
-            body { height: auto; overflow-y: auto; display: flex; flex-direction: column; }
-            .main-content { flex-direction: column; padding: 0 20px; }
-            header { flex-direction: column; gap: 10px; }
-            .left-panel { align-items: center; }
-            .right-panel { text-align: center; }
-            .bottom-schedule { flex-wrap: wrap; justify-content: center; gap: 10px; }
-            .prayer-item { flex: 1 1 40%; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; }
-        }
 
-        /* DIPERBAIKI: Mode landscape HP (layar pendek) biar muat ALL */
+        /* DIPERBAIKI TOTAL: Mode Landscape HP (Naturally Landscape) */
         @media (max-height: 500px) and (orientation: landscape) {
-            body { overflow: hidden; }
+            html, body { overflow: hidden; }
             header { padding: 0.5vh 2vw; }
             header h1 { font-size: clamp(1rem, 3vh, 1.5rem); }
             .header-btn { padding: 5px 10px; font-size: 0.7rem; }
             .main-content { padding: 0 2vw; gap: 1vw; }
-            .clock-container { width: 15vh; height: 15vh; max-width: 100px; max-height: 100px; margin-bottom: 0.5vh; }
-            .digital-clock { font-size: clamp(1.2rem, 4vh, 2rem); }
+            .clock-container { width: 12vh; height: 12vh; max-width: 80px; max-height: 80px; margin-bottom: 0.5vh; }
+            .digital-clock { font-size: clamp(1rem, 3.5vh, 1.8rem); }
             .date-info { font-size: clamp(0.7rem, 1.5vh, 0.9rem); margin-top: 0.2vh; }
             .right-panel { gap: 0.5vh; }
             .info-box { padding: 0.5vh 0; }
@@ -87,6 +78,43 @@
             .p-imam { font-size: clamp(0.5rem, 1vh, 0.7rem); margin-top: 1px; }
             footer { margin: 0.2vh 2vw; padding: 0.2vh 0; }
             .running-text { font-size: clamp(0.7rem, 1.5vh, 1rem); }
+            .hand { width: 4px; height: 25%; margin-top: -25%; }
+            .minute { width: 3px; height: 40%; margin-top: -40%; }
+            .second { width: 1px; height: 45%; margin-top: -45%; }
+        }
+
+        /* TAMBAHAN BARU: PAKSA LANDSCAPE SAAT HP TEGAK (Portrait) */
+        @media screen and (orientation: portrait) {
+            html, body {
+                transform: rotate(90deg);
+                transform-origin: top left;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100vh;
+                height: 100vw;
+                overflow: hidden;
+            }
+            /* Karena diputar, tinggi visual sekarang adalah lebar HP (100vw). Pakai vw untuk resize */
+            header { padding: 0.5vw 2vh; }
+            header h1 { font-size: clamp(1rem, 3vw, 1.5rem); }
+            .header-btn { padding: 5px 10px; font-size: 0.7rem; }
+            .main-content { padding: 0 2vh; gap: 1vh; }
+            .clock-container { width: 12vw; height: 12vw; max-width: 80px; max-height: 80px; margin-bottom: 0.5vw; }
+            .digital-clock { font-size: clamp(1rem, 3.5vw, 1.8rem); }
+            .date-info { font-size: clamp(0.7rem, 1.5vw, 0.9rem); margin-top: 0.2vw; }
+            .right-panel { gap: 0.5vw; }
+            .info-box { padding: 0.5vw 0; }
+            .info-box h3 { margin: 0 0 0.2vw 0; font-size: clamp(0.7rem, 1.5vw, 0.9rem); }
+            .info-list { font-size: clamp(0.6rem, 1.2vw, 0.8rem); line-height: 1.1; }
+            .kas-amount { font-size: clamp(0.7rem, 1.8vw, 1rem); }
+            .bottom-schedule { padding: 0.2vw 1vh; }
+            .prayer-item { padding: 0.2vw 2px; }
+            .p-name { font-size: clamp(0.6rem, 1.2vw, 0.8rem); margin-bottom: 1px; }
+            .p-time { font-size: clamp(0.7rem, 1.5vw, 1rem); }
+            .p-imam { font-size: clamp(0.5rem, 1vw, 0.7rem); margin-top: 1px; }
+            footer { margin: 0.2vw 2vh; padding: 0.2vw 0; }
+            .running-text { font-size: clamp(0.7rem, 1.5vw, 1rem); }
             .hand { width: 4px; height: 25%; margin-top: -25%; }
             .minute { width: 3px; height: 40%; margin-top: -40%; }
             .second { width: 1px; height: 45%; margin-top: -45%; }
@@ -158,20 +186,6 @@
     </div>
 
     <script>
-        // --- PAKSA MODE LANDSCAPE DI HP ---
-        function lockLandscape() {
-            let elem = document.documentElement;
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen().then(function() {
-                    if (screen.orientation && screen.orientation.lock) {
-                        screen.orientation.lock('landscape').catch(function(e){ console.log(e); });
-                    }
-                }).catch(function(e){ console.log(e); });
-            }
-        }
-        // Jalankan saat user pertama kali klik di mana saja
-        document.body.addEventListener('click', lockLandscape, { once: true });
-
         const firebaseConfig = {
             apiKey: "AIzaSyC4CQMl5l1n1voweOgQouMD1kJcpHs-esU",
             databaseURL: "https://gps-tracher-default-rtdb.firebaseio.com"
@@ -213,7 +227,6 @@
         function aktifkanSuaraAdzan() { 
             isSoundActive = true; 
             document.getElementById('sound-btn').style.display = 'none'; 
-            lockLandscape(); // Kunci landscape saat tombol ini diklik
         }
 
         function toggleTartil() {
