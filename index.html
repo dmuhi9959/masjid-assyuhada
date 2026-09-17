@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="orientation" content="landscape">
     <link rel="manifest" href="manifest.json">
     <title>Info Masjid Digital</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -55,10 +54,21 @@
         #warning-overlay h2, #adzan-overlay h2 { font-size: clamp(1.5rem, 5vh, 3rem); color: #ffc107; margin: 0; letter-spacing: 2px; }
         #warning-overlay h1, #adzan-overlay h1 { font-size: clamp(2.5rem, 10vh, 6rem); color: #ffffff; margin: 20px 0; text-shadow: 0 0 20px #ffc107; text-transform: uppercase; }
         #warning-overlay p, #adzan-overlay p { font-size: clamp(1rem, 3vh, 2rem); color: #ccc; margin: 0; transition: color 0.5s; }
+        
+        /* MODE HP TEGAK (Portrait) */
+        @media (max-width: 480px) and (orientation: portrait) {
+            html, body { height: auto; overflow-y: auto; display: flex; flex-direction: column; }
+            .main-content { flex-direction: column; padding: 0 20px; }
+            header { flex-direction: column; gap: 10px; }
+            .left-panel { align-items: center; }
+            .right-panel { text-align: center; }
+            .bottom-schedule { flex-wrap: wrap; justify-content: center; gap: 10px; }
+            .prayer-item { flex: 1 1 40%; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; }
+        }
 
-        /* DIPERBAIKI TOTAL: Mode Landscape HP (Naturally Landscape) */
+        /* MODE HP MELEBAR (Landscape) */
         @media (max-height: 500px) and (orientation: landscape) {
-            html, body { overflow: hidden; }
+            html, body { overflow-y: auto; height: 100dvh; }
             header { padding: 0.5vh 2vw; }
             header h1 { font-size: clamp(1rem, 3vh, 1.5rem); }
             .header-btn { padding: 5px 10px; font-size: 0.7rem; }
@@ -78,43 +88,6 @@
             .p-imam { font-size: clamp(0.5rem, 1vh, 0.7rem); margin-top: 1px; }
             footer { margin: 0.2vh 2vw; padding: 0.2vh 0; }
             .running-text { font-size: clamp(0.7rem, 1.5vh, 1rem); }
-            .hand { width: 4px; height: 25%; margin-top: -25%; }
-            .minute { width: 3px; height: 40%; margin-top: -40%; }
-            .second { width: 1px; height: 45%; margin-top: -45%; }
-        }
-
-        /* TAMBAHAN BARU: PAKSA LANDSCAPE SAAT HP TEGAK (Portrait) */
-        @media screen and (orientation: portrait) {
-            html, body {
-                transform: rotate(90deg);
-                transform-origin: top left;
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100vh;
-                height: 100vw;
-                overflow: hidden;
-            }
-            /* Karena diputar, tinggi visual sekarang adalah lebar HP (100vw). Pakai vw untuk resize */
-            header { padding: 0.5vw 2vh; }
-            header h1 { font-size: clamp(1rem, 3vw, 1.5rem); }
-            .header-btn { padding: 5px 10px; font-size: 0.7rem; }
-            .main-content { padding: 0 2vh; gap: 1vh; }
-            .clock-container { width: 12vw; height: 12vw; max-width: 80px; max-height: 80px; margin-bottom: 0.5vw; }
-            .digital-clock { font-size: clamp(1rem, 3.5vw, 1.8rem); }
-            .date-info { font-size: clamp(0.7rem, 1.5vw, 0.9rem); margin-top: 0.2vw; }
-            .right-panel { gap: 0.5vw; }
-            .info-box { padding: 0.5vw 0; }
-            .info-box h3 { margin: 0 0 0.2vw 0; font-size: clamp(0.7rem, 1.5vw, 0.9rem); }
-            .info-list { font-size: clamp(0.6rem, 1.2vw, 0.8rem); line-height: 1.1; }
-            .kas-amount { font-size: clamp(0.7rem, 1.8vw, 1rem); }
-            .bottom-schedule { padding: 0.2vw 1vh; }
-            .prayer-item { padding: 0.2vw 2px; }
-            .p-name { font-size: clamp(0.6rem, 1.2vw, 0.8rem); margin-bottom: 1px; }
-            .p-time { font-size: clamp(0.7rem, 1.5vw, 1rem); }
-            .p-imam { font-size: clamp(0.5rem, 1vw, 0.7rem); margin-top: 1px; }
-            footer { margin: 0.2vw 2vh; padding: 0.2vw 0; }
-            .running-text { font-size: clamp(0.7rem, 1.5vw, 1rem); }
             .hand { width: 4px; height: 25%; margin-top: -25%; }
             .minute { width: 3px; height: 40%; margin-top: -40%; }
             .second { width: 1px; height: 45%; margin-top: -45%; }
