@@ -1,15 +1,10 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-      <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#000000">
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js');
-    }
-  </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="orientation" content="landscape">
+    <link rel="manifest" href="manifest.json">
     <title>Info Masjid Digital</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -58,7 +53,17 @@
         #warning-overlay h2, #adzan-overlay h2 { font-size: clamp(1.5rem, 5vh, 3rem); color: #ffc107; margin: 0; letter-spacing: 2px; }
         #warning-overlay h1, #adzan-overlay h1 { font-size: clamp(2.5rem, 10vh, 6rem); color: #ffffff; margin: 20px 0; text-shadow: 0 0 20px #ffc107; text-transform: uppercase; }
         #warning-overlay p, #adzan-overlay p { font-size: clamp(1rem, 3vh, 2rem); color: #ccc; margin: 0; transition: color 0.5s; }
-        @media (max-width: 768px) { body { height: auto; overflow-y: auto; } .main-content { flex-direction: column; padding: 0 20px; } header { flex-direction: column; gap: 10px; } .left-panel { align-items: center; } .right-panel { text-align: center; } .bottom-schedule { flex-wrap: wrap; justify-content: center; gap: 10px; } .prayer-item { flex: 1 1 40%; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; } }
+        
+        /* DIPERBAIKI: Hanya mode tegak (portrait) yang menumpuk ke bawah */
+        @media (max-width: 480px) {
+            body { height: auto; overflow-y: auto; display: flex; flex-direction: column; }
+            .main-content { flex-direction: column; padding: 0 20px; }
+            header { flex-direction: column; gap: 10px; }
+            .left-panel { align-items: center; }
+            .right-panel { text-align: center; }
+            .bottom-schedule { flex-wrap: wrap; justify-content: center; gap: 10px; }
+            .prayer-item { flex: 1 1 40%; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; }
+        }
     </style>
 </head>
 <body>
